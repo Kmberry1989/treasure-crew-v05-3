@@ -1,10 +1,14 @@
 import * as THREE from "three";
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { clone as cloneSkinned } from "three/examples/jsm/utils/SkeletonUtils.js";
+import { clone as cloneSkinned, retargetClip } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 const loader = new GLTFLoader();
+const fbxLoader = new FBXLoader();
 const sceneControllers = new Map();
 const assetCache = new Map();
+const animationSourceCache = new Map();
+let animationCatalogPromise = null;
 const clock = new THREE.Clock();
 const sharedAnimationFrame = { id: 0, running: false };
 
@@ -20,6 +24,38 @@ const MOOD_TINTS = {
   "golden-hour": 0xffe0b5,
   pirate: 0xffd0d0,
   storm: 0xc6d7ff,
+};
+
+const ROLE_TO_ACTUAL_CLIP = {
+  captain: {
+    greeting: "standing-greeting",
+    "standing-greeting": "standing-greeting",
+    thinking: "thoughtful-head-shake",
+    pointing: "sitting-and-pointing",
+    warning: "telling-a-secret",
+    confirm: "standing-clap",
+    success: "standing-clap",
+    idle: "idle",
+  },
+  engineer: {
+    greeting: "sitting",
+    "standing-greeting": "sitting",
+    "seated-idle": "seated-idle",
+    sitting: "sitting",
+    repair: "button-pushing",
+    confirm: "sitting-clap",
+    success: "sitting-clap",
+    stressed: "arm-stretching",
+    recovery: "sitting-laughing",
+  },
+  pirate: {
+    idle: "hanging-idle",
+    approach: "walking",
+    taunt: "offensive-idle",
+    surprised: "surprised",
+    "stable-sword-inward-slash": "stable-sword-inward-slash",
+    warning: "angry",
+  },
 };
 
 function normalizePublicPath(src) {
@@ -60,6 +96,52 @@ function cloneAsset(asset) {
   const root = cloneSkinned(asset.scene);
   const animations = asset.animations || [];
   return { root, animations };
+}
+
+function findPrimarySkinnedMesh(root) {
+  let found = null;
+  root?.traverse?.((node) => {
+    if (!found && node.isSkinnedMesh && node.skeleton) found = node;
+  });
+  return found;
+}
+
+async function loadAnimationCatalog() {
+  if (!animationCatalogPromise) {
+    animationCatalogPromise = fetch("/assets/animations/animation-catalog.json", { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : { clips: [] }))
+      .catch(() => ({ clips: [] }));
+  }
+  return animationCatalogPromise;
+}
+
+async function resolveAnimationSourcePath(clipSlug) {
+  const catalog = await loadAnimationCatalog();
+  return catalog.clips?.find((clip) => clip.id === clipSlug)?.sourcePath || "";
+}
+
+async function loadMixamoAnimation(clipSlug) {
+  if (!clipSlug) return null;
+  if (!animationSourceCache.has(clipSlug)) {
+    animationSourceCache.set(
+      clipSlug,
+      resolveAnimationSourcePath(clipSlug)
+        .then((sourcePath) => {
+          if (!sourcePath) return null;
+          return fbxLoader.loadAsync(normalizePublicPath(sourcePath));
+        })
+        .then((fbx) => {
+          if (!fbx?.animations?.length) return null;
+          const sourceMesh = findPrimarySkinnedMesh(fbx);
+          return sourceMesh ? { clip: fbx.animations[0], sourceMesh } : null;
+        })
+        .catch((error) => {
+          console.warn("Animation clip failed to load", clipSlug, error);
+          return null;
+        }),
+    );
+  }
+  return animationSourceCache.get(clipSlug);
 }
 
 async function loadModelAsset(src) {
@@ -139,42 +221,6 @@ function makeGroundRing(color = 0xffd85f) {
   return mesh;
 }
 
-function makePlaceholder(category, accent = 0xffffff) {
-  const group = new THREE.Group();
-  const primary = new THREE.MeshStandardMaterial({ color: accent, roughness: 0.5, metalness: 0.08 });
-  const secondary = new THREE.MeshStandardMaterial({ color: 0xfff7e6, roughness: 0.8 });
-  if (category === "boats") {
-    const hull = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.45, 0.8), primary);
-    hull.position.y = 0.35;
-    hull.rotation.z = 0.04;
-    const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.8, 12), secondary);
-    mast.position.set(0, 1.2, 0);
-    const sail = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 1.05), new THREE.MeshStandardMaterial({ color: 0xfff3cb, side: THREE.DoubleSide }));
-    sail.position.set(0.45, 1.25, 0);
-    group.add(hull, mast, sail);
-  } else if (category === "islands") {
-    const base = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.2, 0.36, 24), new THREE.MeshStandardMaterial({ color: 0x6dbf60 }));
-    base.position.y = 0.2;
-    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 0.9, 10), new THREE.MeshStandardMaterial({ color: 0x8a5c2d }));
-    trunk.position.set(-0.1, 0.82, 0);
-    const leaves = new THREE.Mesh(new THREE.ConeGeometry(0.6, 0.9, 7), new THREE.MeshStandardMaterial({ color: 0x2a934f }));
-    leaves.position.set(-0.1, 1.58, 0);
-    group.add(base, trunk, leaves);
-  } else {
-    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.28, 0.9, 5, 12), primary);
-    body.position.y = 0.82;
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 18, 18), secondary);
-    head.position.y = 1.72;
-    group.add(body, head);
-    if (category === "pirates") {
-      const hat = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.42, 0.16, 18), new THREE.MeshStandardMaterial({ color: 0x23314d }));
-      hat.position.y = 1.98;
-      group.add(hat);
-    }
-  }
-  return group;
-}
-
 function basePositions(mode, layout) {
   if (mode === "dock") {
     return {
@@ -190,6 +236,7 @@ function basePositions(mode, layout) {
   }
   return {
     boat: { position: [0, 0, 0.2], rotationY: 0.1, scale: layout === "compact" ? 1.06 : 1.2 },
+    pirateBoat: { position: [3.5, 0, -2.4], rotationY: -0.72, scale: 1.08 },
     captain: { position: [-1.45, 0, 0.8], rotationY: 0.28, scale: 1.04 },
     engineer: { position: [1.28, 0, 0.95], rotationY: -0.32, scale: 1.02 },
     pirate: { position: [2.75, 0, -1.6], rotationY: -0.9, scale: 1.08 },
@@ -206,18 +253,21 @@ function roleColor(role) {
 }
 
 function targetClipForRole(role, animationState = {}, sceneState = "idle-cruise") {
+  const actual = ROLE_TO_ACTUAL_CLIP[role] || {};
+  const stateClip =
+    role === "captain" ? animationState.captain :
+    role === "engineer" ? animationState.engineer :
+    animationState.pirate;
+  if (stateClip) return actual[stateClip] || stateClip;
   if (role === "captain") {
-    if (animationState.captain) return animationState.captain;
     if (sceneState === "treasure-sighting") return "sitting-and-pointing";
     return "standing-greeting";
   }
   if (role === "engineer") {
-    if (animationState.engineer) return animationState.engineer;
-    return sceneState === "storm-emergency" ? "button-pushing" : "sitting";
+    return sceneState === "storm-emergency" ? "button-pushing" : "seated-idle";
   }
   if (role === "pirate") {
-    if (animationState.pirate) return animationState.pirate;
-    return sceneState === "pirate-approach" ? "stable-sword-inward-slash" : "hanging-idle";
+    return sceneState === "pirate-approach" ? "offensive-idle" : "hanging-idle";
   }
   return "sitting";
 }
@@ -386,7 +436,7 @@ class SceneController {
             previewCategory === "boats" ? "boat" :
             previewCategory === "islands" ? "island" :
             previewCategory === "environments" ? "environment" :
-            "captain",
+            previewCategory === "players" ? "captain" : "prop",
         }];
       }
       const categoryItems = models[previewCategory] || [];
@@ -396,13 +446,14 @@ class SceneController {
         previewCategory === "boats" ? "boat" :
         previewCategory === "islands" ? "island" :
         previewCategory === "environments" ? "environment" :
-        "captain";
+        previewCategory === "players" ? "captain" : "prop";
       return item ? [{ slot: "preview", category: previewCategory, item, role }] : [];
     }
 
-    const captain = (models.players || []).find((item) => item.id === (equipped.captainPlayer || "player-default"));
-    const engineer = (models.players || []).find((item) => item.id === (equipped.engineerPlayer || "player-default"));
+    const captain = (models.players || []).find((item) => item.id === (equipped.captainPlayer || "player-captain"));
+    const engineer = (models.players || []).find((item) => item.id === (equipped.engineerPlayer || "sailor-rochelle"));
     const boat = (models.boats || []).find((item) => item.id === (equipped.boat || "boat-glossy-sloop"));
+    const pirateBoat = (models.boats || []).find((item) => item.id === "boat-pirate-brown");
     const pirate = (models.pirates || []).find((item) => item.id === (equipped.pirate || "pirate-default"));
     const island = (models.islands || []).find((item) => item.id === (equipped.island || "island-berry-cove"));
     const environment = (models.environments || []).find((item) => item.id === (equipped.environment || "env-sky-cockpit"));
@@ -411,6 +462,9 @@ class SceneController {
     if (captain) plan.push({ slot: "captain", category: "players", item: captain, role: "captain" });
     if (engineer) plan.push({ slot: "engineer", category: "players", item: engineer, role: "engineer" });
     if (boat) plan.push({ slot: "boat", category: "boats", item: boat, role: "boat" });
+    if (this.mode === "hero" && pirateBoat && (sceneState === "pirate-approach" || room.sceneSnapshot?.mood === "pirate")) {
+      plan.push({ slot: "pirateBoat", category: "boats", item: pirateBoat, role: "boat" });
+    }
     if (this.mode === "hero" && pirate && (sceneState === "pirate-approach" || room.sceneSnapshot?.mood === "pirate")) {
       plan.push({ slot: "pirate", category: "pirates", item: pirate, role: "pirate" });
     }
@@ -444,19 +498,36 @@ class SceneController {
     const loaded = entry.item?.src ? await loadModelAsset(entry.item.src) : null;
     if (syncToken !== this.syncToken) return;
 
-    const assetRoot = loaded?.root || makePlaceholder(entry.category, roleColor(entry.role));
+    if (!loaded?.root) return;
+    const assetRoot = loaded.root;
     normalizeAssetRoot(assetRoot, entry.category === "boats" ? 1.5 : entry.category === "islands" ? 1.8 : 1.55);
     applyManifestTransform(assetRoot, entry.item);
     wrapper.add(assetRoot);
     wrapper.userData.assetRoot = assetRoot;
 
-    if (loaded?.animations?.length) {
-      const mixer = new THREE.AnimationMixer(assetRoot);
-      const clip = findMatchingClip(loaded.animations, entry.item?.defaultIdle) || loaded.animations[0];
-      if (clip) {
-        mixer.clipAction(clip).reset().play();
-        this.mixers.set(entry.slot, { mixer, animations: loaded.animations, currentClip: clip.name });
-      }
+    const mixer = new THREE.AnimationMixer(assetRoot);
+    const targetMesh = findPrimarySkinnedMesh(assetRoot);
+    const clipCache = new Map();
+    const builtInClip = findMatchingClip(loaded.animations, entry.item?.defaultIdle) || loaded.animations[0] || null;
+    if (builtInClip) clipCache.set(slugify(builtInClip.name), builtInClip);
+    this.mixers.set(entry.slot, {
+      mixer,
+      animations: loaded.animations,
+      targetMesh,
+      clipCache,
+      currentClip: null,
+      loadingClip: null,
+      currentAction: null,
+      item: entry.item,
+      role: entry.role,
+    });
+    if (entry.role === "captain" || entry.role === "engineer" || entry.role === "pirate") {
+      this.updateMixerClip(entry.slot, targetClipForRole(entry.role, this.room?.sceneSnapshot?.animationState || {}, this.room?.sceneSnapshot?.state || "idle-cruise"));
+    } else if (builtInClip) {
+      const action = mixer.clipAction(builtInClip);
+      action.reset().play();
+      this.mixers.get(entry.slot).currentAction = action;
+      this.mixers.get(entry.slot).currentClip = slugify(builtInClip.name);
     }
 
     group.add(wrapper);
@@ -553,12 +624,48 @@ class SceneController {
 
   updateMixerClip(slot, desiredClip) {
     const mixerState = this.mixers.get(slot);
-    if (!mixerState || mixerState.currentClip === desiredClip) return;
-    const clip = findMatchingClip(mixerState.animations, desiredClip);
-    if (!clip) return;
-    mixerState.mixer.stopAllAction();
-    mixerState.mixer.clipAction(clip).reset().play();
-    mixerState.currentClip = clip.name;
+    const clipSlug = slugify(desiredClip);
+    if (!mixerState || !clipSlug || mixerState.currentClip === clipSlug) return;
+    const cached = mixerState.clipCache.get(clipSlug);
+    if (cached) {
+      mixerState.currentAction?.fadeOut?.(0.18);
+      const action = mixerState.mixer.clipAction(cached);
+      action.reset().fadeIn(0.18).play();
+      mixerState.currentAction = action;
+      mixerState.currentClip = clipSlug;
+      return;
+    }
+    if (mixerState.loadingClip === clipSlug || !mixerState.targetMesh) return;
+    mixerState.loadingClip = clipSlug;
+    this.loadRetargetedClip(mixerState, clipSlug).then((clip) => {
+      mixerState.loadingClip = null;
+      if (!clip) return;
+      mixerState.clipCache.set(clipSlug, clip);
+      if (mixerState.currentClip === clipSlug) return;
+      mixerState.currentAction?.fadeOut?.(0.18);
+      const action = mixerState.mixer.clipAction(clip);
+      action.reset().fadeIn(0.18).play();
+      mixerState.currentAction = action;
+      mixerState.currentClip = clipSlug;
+    });
+  }
+
+  async loadRetargetedClip(mixerState, clipSlug) {
+    const builtIn = findMatchingClip(mixerState.animations, clipSlug);
+    if (builtIn) return builtIn;
+    const source = await loadMixamoAnimation(clipSlug);
+    if (!source?.clip || !source?.sourceMesh || !mixerState.targetMesh) return null;
+    try {
+      return retargetClip(mixerState.targetMesh, source.sourceMesh, source.clip, {
+        hip: "mixamorigHips",
+        preserveBoneMatrix: true,
+        preserveBonePositions: true,
+        useFirstFramePosition: false,
+      });
+    } catch (error) {
+      console.warn("Animation retarget failed", clipSlug, error);
+      return null;
+    }
   }
 
   applyProceduralCharacterMotion(assetRoot, role, clipName, elapsed, reducedMotion) {

@@ -156,8 +156,8 @@ const TREASURE_ROUNDS = [
 const COSMETIC_UNLOCKS = [
   { manualPage: 0, category: "steeringWheels", id: "wheel-classic", name: "Classic Toy Wheel" },
   { manualPage: 0, category: "seats", id: "seat-navy", name: "Navy Captain Chair" },
-  { manualPage: 0, category: "players", id: "player-default", name: "Default Crew Toy" },
   { manualPage: 0, category: "players", id: "player-captain", name: "Captain Variant" },
+  { manualPage: 0, category: "players", id: "sailor-rochelle", name: "Sailor Rochelle" },
   { manualPage: 0, category: "boats", id: "boat-glossy-sloop", name: "Glossy Sloop" },
   { manualPage: 0, category: "environments", id: "env-sky-cockpit", name: "Sky Cockpit Environment" },
   { manualPage: 1, category: "steeringWheels", id: "wheel-brass", name: "Royal Brass Wheel" },
@@ -330,7 +330,7 @@ function makeCosmeticState() {
     unlocked: {
       steeringWheels: ["wheel-classic"],
       seats: ["seat-navy"],
-      players: ["player-default", "player-captain"],
+      players: ["player-captain", "sailor-rochelle", "sailor-kyle", "sailor-vickie"],
       boats: ["boat-glossy-sloop"],
       pirates: [],
       islands: [],
@@ -341,8 +341,8 @@ function makeCosmeticState() {
       steeringWheel: "wheel-classic",
       captainSeat: "seat-navy",
       engineerSeat: "seat-navy",
-      captainPlayer: "player-default",
-      engineerPlayer: "player-default",
+      captainPlayer: "player-captain",
+      engineerPlayer: "sailor-rochelle",
       boat: "boat-glossy-sloop",
       pirate: "pirate-default",
       island: "island-berry-cove",
@@ -476,31 +476,31 @@ function animationStateForRoom(room) {
   const engineerOnly = room.encounter.engineerComplete && !room.encounter.captainComplete;
 
   let captain = "standing-greeting";
-  let engineer = "standing-greeting";
-  let pirate = sceneState === "pirate-approach" ? "approach" : "idle";
+  let engineer = "sitting";
+  let pirate = sceneState === "pirate-approach" ? "walking" : "hanging-idle";
 
   if (phase === "briefing") {
-    captain = "greeting";
-    engineer = "greeting";
+    captain = "standing-greeting";
+    engineer = "sitting";
   }
 
   if (phase === "challenge") {
-    captain = sceneState === "treasure-sighting" ? "pointing" : sceneState === "storm-emergency" ? "warning" : "thinking";
-    engineer = sceneState === "storm-emergency" ? "repair" : "seated-idle";
-    pirate = sceneState === "pirate-approach" ? "taunt" : pirate;
+    captain = sceneState === "treasure-sighting" ? "sitting-and-pointing" : sceneState === "storm-emergency" ? "telling-a-secret" : "thoughtful-head-shake";
+    engineer = sceneState === "storm-emergency" ? "button-pushing" : "seated-idle";
+    pirate = sceneState === "pirate-approach" ? "offensive-idle" : pirate;
   }
 
   if (phase === "resolution") {
-    captain = "success";
-    engineer = "success";
+    captain = "standing-clap";
+    engineer = "sitting-clap";
     pirate = sceneState === "pirate-approach" ? "surprised" : pirate;
   }
 
-  if (captainOnly) engineer = "confirm";
-  if (engineerOnly) captain = "confirm";
+  if (captainOnly) engineer = "clapping";
+  if (engineerOnly) captain = "clapping";
   if (bothComplete) {
-    captain = "success";
-    engineer = "success";
+    captain = "standing-clap";
+    engineer = "sitting-clap";
   }
 
   return {

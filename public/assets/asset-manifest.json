@@ -1,25 +1,29 @@
 {
   "version": "0.7.0",
-  "notes": "V0.7.0 adds runtime animation metadata and a bundled 3D scene pipeline. FBX clips are source-only authoring assets; runtime delivery should use converted GLB clips.",
+  "notes": "V0.7.0 uses the shipped GLBs for runtime scenes and loads Mixamo-armature FBX clips directly for character animation retargeting.",
   "models": {
     "players": [
       {
         "id": "player-default",
-        "name": "Default Crew Toy",
-        "src": "",
-        "thumbnail": "",
+        "name": "Captain Variant",
+        "src": "assets/models/players/player-captain.glb",
+        "thumbnail": "assets/thumbnails/players/player-captain.png",
         "slot": "crew",
         "sceneRole": "captain-player",
         "animationSet": "crew-core",
-        "defaultIdle": "sitting",
-        "supportedClips": ["sitting", "standing-greeting", "silly-dancing", "sitting-clap", "sitting-laughing"],
+        "defaultIdle": "standing-greeting",
+        "supportedClips": ["idle", "standing-greeting", "standing-clap", "thoughtful-head-shake", "sitting-and-pointing"],
         "characterRig": "crew-biped",
-        "status": "css-fallback",
+        "status": "runtime-ready",
         "scale": 1,
         "rotation": [
           0,
           0,
           0
+        ],
+        "thumbnailSize": [
+          512,
+          512
         ]
       },
       {
@@ -242,12 +246,12 @@
       {
         "id": "wheel-classic",
         "name": "Classic Toy Wheel",
-        "src": "",
+        "src": "assets/models/steering-wheels/wheel-classic.glb",
         "thumbnail": "",
         "slot": "cockpit-wheel",
         "sceneRole": "cockpit-wheel",
         "unlockAtManualPages": 0,
-        "status": "css-fallback"
+        "status": "runtime-ready"
       },
       {
         "id": "wheel-brass",
@@ -284,12 +288,12 @@
       {
         "id": "seat-navy",
         "name": "Navy Captain Chair",
-        "src": "",
+        "src": "assets/models/seats/seat-navy.glb",
         "thumbnail": "",
         "slot": "player-seat",
         "sceneRole": "captain-seat",
         "unlockAtManualPages": 0,
-        "status": "css-fallback"
+        "status": "runtime-ready"
       },
       {
         "id": "seat-cream",

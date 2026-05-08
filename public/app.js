@@ -41,7 +41,7 @@ const FALLBACK_ASSET_MANIFEST = {
   notes: "Drop real GLB/GLTF files into the listed folders, then keep ids stable so unlocks and equipped loadouts remain valid.",
   models: {
     players: [
-      { id: "player-default", name: "Default Crew Toy", src: "", thumbnail: "", slot: "crew", sceneRole: "captain-player", animationSet: "crew-core", defaultIdle: "sitting", supportedClips: ["sitting", "standing-greeting", "silly-dancing", "sitting-clap", "sitting-laughing"], characterRig: "crew-biped", status: "css-fallback", scale: 1, rotation: [0, 0, 0] },
+      { id: "player-default", name: "Captain Variant", src: "assets/models/players/player-captain.glb", thumbnail: "assets/thumbnails/players/player-captain.png", slot: "crew", sceneRole: "captain-player", animationSet: "crew-core", defaultIdle: "standing-greeting", supportedClips: ["idle", "standing-greeting", "standing-clap", "thoughtful-head-shake", "sitting-and-pointing"], characterRig: "crew-biped", status: "runtime-ready", scale: 1, rotation: [0, 0, 0] },
       { id: "player-captain", name: "Captain Variant", src: "assets/models/players/player-captain.glb", thumbnail: "assets/thumbnails/players/player-captain.png", slot: "crew", sceneRole: "captain-player", animationSet: "crew-core", defaultIdle: "sitting", supportedClips: ["sitting", "standing-greeting", "silly-dancing", "sitting-clap", "sitting-laughing"], characterRig: "crew-biped", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["harbor-launch", "treasure-waters"] },
       { id: "sailor-kyle", name: "Sailor Kyle", src: "assets/models/players/sailor_kyle.glb", thumbnail: "", slot: "crew", sceneRole: "captain-player", animationSet: "crew-core", defaultIdle: "standing-greeting", supportedClips: ["standing-greeting", "walking", "jogging", "joyful-jump", "button-pushing"], characterRig: "crew-biped", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["harbor-launch", "storm-repair"] },
       { id: "sailor-rochelle", name: "Sailor Rochelle", src: "assets/models/players/sailor_rochelle.glb", thumbnail: "", slot: "crew", sceneRole: "engineer-player", animationSet: "crew-core", defaultIdle: "sitting", supportedClips: ["sitting", "sitting-and-pointing", "opening", "pick-fruit", "dig-and-plant-seeds"], characterRig: "crew-biped", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["treasure-waters"] },
@@ -63,12 +63,12 @@ const FALLBACK_ASSET_MANIFEST = {
       { id: "env-sky-cockpit", name: "Sky Cockpit Environment", src: "assets/models/environments/env-sky-cockpit.glb", thumbnail: "assets/thumbnails/environments/env-sky-cockpit.png", slot: "environment", sceneRole: "environment", status: "drop-your-model", scale: 1, rotation: [0, 0, 0] },
     ],
     steeringWheels: [
-      { id: "wheel-classic", name: "Classic Toy Wheel", src: "", thumbnail: "", slot: "cockpit-wheel", sceneRole: "cockpit-wheel", unlockAtManualPages: 0, status: "css-fallback" },
+      { id: "wheel-classic", name: "Classic Toy Wheel", src: "assets/models/steering-wheels/wheel-classic.glb", thumbnail: "", slot: "cockpit-wheel", sceneRole: "cockpit-wheel", unlockAtManualPages: 0, status: "runtime-ready" },
       { id: "wheel-brass", name: "Royal Brass Wheel", src: "assets/models/steering-wheels/wheel-brass.glb", thumbnail: "assets/thumbnails/steering-wheels/wheel-brass.png", slot: "cockpit-wheel", sceneRole: "cockpit-wheel", unlockAtManualPages: 1, status: "drop-your-model", chapterTags: ["harbor-launch"] },
       { id: "wheel-pirate", name: "Pirate Bone Wheel", src: "assets/models/steering-wheels/wheel-pirate.glb", thumbnail: "assets/thumbnails/steering-wheels/wheel-pirate.png", slot: "cockpit-wheel", sceneRole: "cockpit-wheel", unlockAtManualPages: 3, status: "drop-your-model", chapterTags: ["pirate-intercept"] },
     ],
     seats: [
-      { id: "seat-navy", name: "Navy Captain Chair", src: "", thumbnail: "", slot: "player-seat", sceneRole: "captain-seat", unlockAtManualPages: 0, status: "css-fallback" },
+      { id: "seat-navy", name: "Navy Captain Chair", src: "assets/models/seats/seat-navy.glb", thumbnail: "", slot: "player-seat", sceneRole: "captain-seat", unlockAtManualPages: 0, status: "runtime-ready" },
       { id: "seat-cream", name: "Cloud Cream Chair", src: "assets/models/seats/seat-cream.glb", thumbnail: "assets/thumbnails/seats/seat-cream.png", slot: "player-seat", sceneRole: "engineer-seat", unlockAtManualPages: 2, status: "drop-your-model" },
       { id: "seat-pirate", name: "Pirate Red Chair", src: "assets/models/seats/seat-pirate.glb", thumbnail: "assets/thumbnails/seats/seat-pirate.png", slot: "player-seat", sceneRole: "engineer-seat", unlockAtManualPages: 4, status: "drop-your-model", chapterTags: ["pirate-intercept"] },
     ],
@@ -565,8 +565,8 @@ function voyageSceneMarkup(room) {
   const equipped = room.sceneSnapshot?.equipped || {};
   const entries = [
     ["Boat", modelById("boats", equipped.boat || "boat-glossy-sloop")],
-    ["Captain", modelById("players", equipped.captainPlayer || "player-default")],
-    ["Engineer", modelById("players", equipped.engineerPlayer || "player-default")],
+    ["Captain", modelById("players", equipped.captainPlayer || "player-captain")],
+    ["Engineer", modelById("players", equipped.engineerPlayer || "sailor-rochelle")],
     ["Pirate", modelById("pirates", equipped.pirate || "pirate-default")],
     ["Island", modelById("islands", equipped.island || "island-berry-cove")],
     ["Environment", modelById("environments", equipped.environment || "env-sky-cockpit")],
@@ -752,7 +752,7 @@ function wheelMarkup(wheelId = "wheel-classic") {
   return html`<div class="wheel-wrap wheel-skin-${safeClass(wheelId)}" title="${escapeHtml(wheel.name)}"><div class="wheel">${Array.from({ length: 8 }, (_, index) => `<span style="transform: rotate(${index * 45}deg)"></span>`).join("")}<b></b></div><div class="small-gauges">${blankGauge(31)}${blankGauge(74)}</div><div class="equipped-tag">${escapeHtml(wheel.name)}</div></div>`;
 }
 
-function playerStationMarkup(role, occupied, active, seatId = "seat-navy", playerModelId = "player-default") {
+function playerStationMarkup(role, occupied, active, seatId = "seat-navy", playerModelId = "player-captain") {
   const tablets =
     role === "captain"
       ? tabletMarkup("RADIO", "radio") + tabletMarkup("WORDS", "word") + tabletMarkup("RELAY", "signals")
@@ -778,8 +778,8 @@ function tabletMarkup(title, visual) {
 function assetPreviewStripMarkup(room) {
   const equipped = room.cosmetics?.equipped || {};
   const items = [
-    ["captain", modelById("players", equipped.captainPlayer || "player-default")],
-    ["engineer", modelById("players", equipped.engineerPlayer || "player-default")],
+    ["captain", modelById("players", equipped.captainPlayer || "player-captain")],
+    ["engineer", modelById("players", equipped.engineerPlayer || "sailor-rochelle")],
     ["boat", modelById("boats", equipped.boat || "boat-glossy-sloop")],
     ["wheel", modelById("steeringWheels", equipped.steeringWheel || "wheel-classic")],
     ["island", modelById("islands", equipped.island || "island-berry-cove")],
@@ -836,8 +836,8 @@ function treasureHuntMarkup(hunt, seat) {
 function assetSummaryMarkup(room) {
   const equipped = room.cosmetics?.equipped || {};
   const loadout = [
-    ["Captain", modelById("players", equipped.captainPlayer || "player-default")],
-    ["Engineer", modelById("players", equipped.engineerPlayer || "player-default")],
+    ["Captain", modelById("players", equipped.captainPlayer || "player-captain")],
+    ["Engineer", modelById("players", equipped.engineerPlayer || "sailor-rochelle")],
     ["Boat", modelById("boats", equipped.boat || "boat-glossy-sloop")],
     ["Wheel", modelById("steeringWheels", equipped.steeringWheel || "wheel-classic")],
     ["Pirate", modelById("pirates", equipped.pirate || "pirate-default")],

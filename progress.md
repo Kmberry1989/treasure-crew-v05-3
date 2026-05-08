@@ -14,5 +14,8 @@ Original prompt: implement my assets into the game and plan out how we can make 
 - Added build scripts for `scene-runtime.bundle.js` and a generated animation catalog sourced from the new FBX folder.
 - Added a Three.js scene runtime with persistent crew avatar dock, voyage hero diorama, and animated player/pirate hangar previews.
 - Removed `model-viewer` from the hosted client and moved all ready-state hangar previews onto the shared Three.js runtime, including local blob previews.
-- The new runtime uses the shipped GLBs for players, pirates, boats, islands, and environments, with state-driven procedural motion and clip fallback behavior.
-- Formalized the animation asset pipeline so FBX files remain source-only and are mapped to future runtime GLB clips via `public/assets/animations/README.md` and `animation-catalog.json`.
+- The new runtime uses the shipped GLBs for players, pirates, boats, islands, and environments.
+- 2026-05-08: Replaced the last primitive-backed default loadout paths with actual shipped models for captain, engineer, wheel, and seats.
+- Added direct Mixamo-armature FBX retargeting in the scene runtime so character animation now comes from the real source clips instead of only procedural fallback motion.
+- Added a real pirate boat slot in hero scenes and aligned server `animationState` output with actual clip names.
+- Verified on a fresh local server that new rooms now default to `player-captain`, `sailor-rochelle`, `wheel-classic.glb`, and `seat-navy.glb`, and that the in-browser scene runtime runs without warnings during live challenge flow.
