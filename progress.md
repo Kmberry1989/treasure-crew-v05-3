@@ -10,3 +10,8 @@ Original prompt: implement my assets into the game and plan out how we can make 
   - room create/join
   - browser render through lobby -> voyage briefing -> challenge -> puzzle tab
   - API progression through `campaign:start`, `encounter:begin`, `task:complete`, `scene:acknowledge`, `chapter:selectRoute`, `reward:claim`
+- 2026-05-08: Added the first bundled Three.js presentation layer for animated 3D scenes.
+- Added build scripts for `scene-runtime.bundle.js` and a generated animation catalog sourced from the new FBX folder.
+- Added a Three.js scene runtime with persistent crew avatar dock, voyage hero diorama, and animated player/pirate hangar previews.
+- The new runtime uses the shipped GLBs for players, pirates, boats, islands, and environments, with state-driven procedural motion and clip fallback behavior.
+- Formalized the animation asset pipeline so FBX files remain source-only and are mapped to future runtime GLB clips via `public/assets/animations/README.md` and `animation-catalog.json`.

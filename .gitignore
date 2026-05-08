@@ -7,3 +7,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+public/scene-runtime.bundle.js
+public/scene-runtime.bundle.js.map
+public/assets/animations/animation-catalog.json

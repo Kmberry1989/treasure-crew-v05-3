@@ -468,6 +468,57 @@ function chapterSummaries() {
   }));
 }
 
+function animationStateForRoom(room) {
+  const phase = room.encounter.phase;
+  const sceneState = room.scene.state;
+  const bothComplete = room.encounter.captainComplete && room.encounter.engineerComplete;
+  const captainOnly = room.encounter.captainComplete && !room.encounter.engineerComplete;
+  const engineerOnly = room.encounter.engineerComplete && !room.encounter.captainComplete;
+
+  let captain = "standing-greeting";
+  let engineer = "standing-greeting";
+  let pirate = sceneState === "pirate-approach" ? "approach" : "idle";
+
+  if (phase === "briefing") {
+    captain = "greeting";
+    engineer = "greeting";
+  }
+
+  if (phase === "challenge") {
+    captain = sceneState === "treasure-sighting" ? "pointing" : sceneState === "storm-emergency" ? "warning" : "thinking";
+    engineer = sceneState === "storm-emergency" ? "repair" : "seated-idle";
+    pirate = sceneState === "pirate-approach" ? "taunt" : pirate;
+  }
+
+  if (phase === "resolution") {
+    captain = "success";
+    engineer = "success";
+    pirate = sceneState === "pirate-approach" ? "surprised" : pirate;
+  }
+
+  if (captainOnly) engineer = "confirm";
+  if (engineerOnly) captain = "confirm";
+  if (bothComplete) {
+    captain = "success";
+    engineer = "success";
+  }
+
+  return {
+    phase,
+    sceneState,
+    captain,
+    engineer,
+    pirate,
+    highlightSeat: captainOnly ? "engineer" : engineerOnly ? "captain" : bothComplete ? "both" : null,
+    celebration: phase === "resolution" && room.encounter.sharedConfirmedBy.includes("captain") && room.encounter.sharedConfirmedBy.includes("engineer"),
+    piratePressure: room.stats.piratePressure,
+    taskState: {
+      captainComplete: room.encounter.captainComplete,
+      engineerComplete: room.encounter.engineerComplete,
+    },
+  };
+}
+
 function sceneSnapshotForRoom(room) {
   const chapter = currentChapter(room);
   const scene = VOYAGE_SCENES[room.scene.state] || VOYAGE_SCENES["idle-cruise"];
@@ -480,6 +531,7 @@ function sceneSnapshotForRoom(room) {
     chapterTitle: chapter.title,
     challengeType: room.encounter.challengeType,
     equipped: { ...room.cosmetics.equipped },
+    animationState: animationStateForRoom(room),
   };
 }
 
@@ -1043,7 +1095,7 @@ const server = http.createServer(async (req, res) => {
   try {
     if ((req.method === "GET" || req.method === "HEAD") && url.pathname === "/health") {
       if (req.method === "HEAD") {
-        const payload = JSON.stringify({ ok: true, version: "0.6.0" });
+        const payload = JSON.stringify({ ok: true, version: "0.7.0" });
         res.writeHead(200, {
           "Content-Type": "application/json; charset=utf-8",
           "Content-Length": Buffer.byteLength(payload),
@@ -1052,7 +1104,7 @@ const server = http.createServer(async (req, res) => {
         res.end();
         return;
       }
-      return sendJson(res, 200, { ok: true, version: "0.6.0" });
+      return sendJson(res, 200, { ok: true, version: "0.7.0" });
     }
 
     if (req.method === "POST" && url.pathname === "/api/create") {
@@ -1125,5 +1177,5 @@ setInterval(() => {
 }, 9000);
 
 server.listen(PORT, () => {
-  console.log(`Treasure Crew Co-op v0.6.0 running at http://localhost:${PORT}`);
+  console.log(`Treasure Crew Co-op v0.7.0 running at http://localhost:${PORT}`);
 });

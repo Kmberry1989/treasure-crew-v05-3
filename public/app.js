@@ -37,15 +37,20 @@ const CARGO_ITEMS = [
 ];
 
 const FALLBACK_ASSET_MANIFEST = {
-  version: "0.6.0",
+  version: "0.7.0",
   notes: "Drop real GLB/GLTF files into the listed folders, then keep ids stable so unlocks and equipped loadouts remain valid.",
   models: {
     players: [
-      { id: "player-default", name: "Default Crew Toy", src: "", thumbnail: "", slot: "crew", sceneRole: "captain-player", status: "css-fallback", scale: 1, rotation: [0, 0, 0] },
-      { id: "player-captain", name: "Captain Variant", src: "assets/models/players/player-captain.glb", thumbnail: "assets/thumbnails/players/player-captain.png", slot: "crew", sceneRole: "captain-player", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["harbor-launch", "treasure-waters"] },
+      { id: "player-default", name: "Default Crew Toy", src: "", thumbnail: "", slot: "crew", sceneRole: "captain-player", animationSet: "crew-core", defaultIdle: "sitting", supportedClips: ["sitting", "standing-greeting", "silly-dancing", "sitting-clap", "sitting-laughing"], characterRig: "crew-biped", status: "css-fallback", scale: 1, rotation: [0, 0, 0] },
+      { id: "player-captain", name: "Captain Variant", src: "assets/models/players/player-captain.glb", thumbnail: "assets/thumbnails/players/player-captain.png", slot: "crew", sceneRole: "captain-player", animationSet: "crew-core", defaultIdle: "sitting", supportedClips: ["sitting", "standing-greeting", "silly-dancing", "sitting-clap", "sitting-laughing"], characterRig: "crew-biped", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["harbor-launch", "treasure-waters"] },
+      { id: "sailor-kyle", name: "Sailor Kyle", src: "assets/models/players/sailor_kyle.glb", thumbnail: "", slot: "crew", sceneRole: "captain-player", animationSet: "crew-core", defaultIdle: "standing-greeting", supportedClips: ["standing-greeting", "walking", "jogging", "joyful-jump", "button-pushing"], characterRig: "crew-biped", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["harbor-launch", "storm-repair"] },
+      { id: "sailor-rochelle", name: "Sailor Rochelle", src: "assets/models/players/sailor_rochelle.glb", thumbnail: "", slot: "crew", sceneRole: "engineer-player", animationSet: "crew-core", defaultIdle: "sitting", supportedClips: ["sitting", "sitting-and-pointing", "opening", "pick-fruit", "dig-and-plant-seeds"], characterRig: "crew-biped", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["treasure-waters"] },
+      { id: "sailor-vickie", name: "Sailor Vickie", src: "assets/models/players/sailor_vickie.glb", thumbnail: "", slot: "crew", sceneRole: "engineer-player", animationSet: "crew-core", defaultIdle: "sitting", supportedClips: ["sitting", "sitting-clap", "surprised", "climbing-ladder"], characterRig: "crew-biped", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["pirate-intercept", "storm-repair"] },
     ],
     pirates: [
-      { id: "pirate-default", name: "Pirate Toy Enemy", src: "assets/models/pirates/pirate-default.glb", thumbnail: "assets/thumbnails/pirates/pirate-default.png", slot: "enemy", sceneRole: "pirate-captain", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["pirate-intercept"] },
+      { id: "pirate-default", name: "Pirate Toy Enemy", src: "assets/models/pirates/pirate-default.glb", thumbnail: "assets/thumbnails/pirates/pirate-default.png", slot: "enemy", sceneRole: "pirate-captain", animationSet: "pirate-core", defaultIdle: "hanging-idle", supportedClips: ["stable-sword-inward-slash", "surprised", "hanging-idle", "walking"], characterRig: "pirate-biped", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["pirate-intercept"] },
+      { id: "pirate-one", name: "Pirate Mate One", src: "assets/models/pirates/pirate_1.glb", thumbnail: "", slot: "enemy", sceneRole: "pirate-captain", animationSet: "pirate-core", defaultIdle: "hanging-idle", supportedClips: ["stable-sword-inward-slash", "surprised", "walking"], characterRig: "pirate-biped", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["pirate-intercept"] },
+      { id: "pirate-two", name: "Pirate Mate Two", src: "assets/models/pirates/pirate_2.glb", thumbnail: "", slot: "enemy", sceneRole: "pirate-captain", animationSet: "pirate-core", defaultIdle: "hanging-idle", supportedClips: ["stable-sword-inward-slash", "surprised", "walking"], characterRig: "pirate-biped", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["pirate-intercept"] },
     ],
     boats: [
       { id: "boat-glossy-sloop", name: "Glossy Sloop", src: "assets/models/boats/boat-glossy-sloop.glb", thumbnail: "assets/thumbnails/boats/boat-glossy-sloop.png", slot: "player-boat", sceneRole: "player-boat", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], position: [0, 0, 0] },
@@ -81,6 +86,11 @@ const FALLBACK_ASSET_MANIFEST = {
     liquidTube: "assets/minigames/maintenance/liquid-tube.svg",
     treasureX: "assets/minigames/treasure/treasure-x.svg",
   },
+  animations: {
+    sourceRoot: "assets/thumbnails/animations",
+    runtimeRoot: "assets/animations/runtime",
+    catalog: "assets/animations/animation-catalog.json",
+  },
 };
 
 const HANGAR_CATEGORIES = [
@@ -109,6 +119,12 @@ const state = {
     hangarSelection: {},
     localPreview: null,
   },
+};
+
+const sceneRuntime = {
+  module: null,
+  loading: null,
+  enabled: true,
 };
 
 function html(strings, ...values) {
@@ -193,7 +209,58 @@ function mergeManifest(base, incoming) {
     models: { ...(base.models || {}), ...(incoming.models || {}) },
     gui: { ...(base.gui || {}), ...(incoming.gui || {}) },
     minigames: { ...(base.minigames || {}), ...(incoming.minigames || {}) },
+    animations: { ...(base.animations || {}), ...(incoming.animations || {}) },
   };
+}
+
+async function ensureSceneRuntime() {
+  if (!sceneRuntime.enabled) return null;
+  if (sceneRuntime.module) return sceneRuntime.module;
+  if (!sceneRuntime.loading) {
+    sceneRuntime.loading = import("/scene-runtime.bundle.js")
+      .then((module) => {
+        sceneRuntime.module = module;
+        return module;
+      })
+      .catch((error) => {
+        console.error("Failed to load scene runtime", error);
+        sceneRuntime.enabled = false;
+        return null;
+      });
+  }
+  return sceneRuntime.loading;
+}
+
+async function syncSceneRuntime() {
+  const runtime = await ensureSceneRuntime();
+  if (!runtime) return;
+
+  const hosts = [...document.querySelectorAll("[data-scene-host]")];
+  const activeModes = new Set(hosts.map((host) => host.dataset.sceneMode));
+
+  ["dock", "hero", "preview"].forEach((mode) => {
+    if (!activeModes.has(mode)) runtime.disposeScene(mode);
+  });
+
+  if (!state.room) return;
+
+  const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || false;
+  for (const host of hosts) {
+    runtime.mountScene(host, host.dataset.sceneMode);
+    runtime.setSceneLayout(host.dataset.sceneMode, window.innerWidth < 720 ? "compact" : "default");
+    runtime.updateSceneFromRoom(state.room, {
+      mode: host.dataset.sceneMode,
+      manifest: state.assetManifest,
+      previewCategory: host.dataset.previewCategory || null,
+      previewAssetId: host.dataset.previewAssetId || null,
+      reducedMotion,
+    });
+  }
+}
+
+function teardownScenes() {
+  if (!sceneRuntime.module) return;
+  ["dock", "hero", "preview"].forEach((mode) => sceneRuntime.module.disposeScene(mode));
 }
 
 function normalizeAssetPath(src) {
@@ -337,7 +404,10 @@ function currentRoleTask(room) {
 }
 
 function render() {
-  if (!state.room) return renderLanding();
+  if (!state.room) {
+    teardownScenes();
+    return renderLanding();
+  }
   renderGame();
 }
 
@@ -348,7 +418,7 @@ function renderLanding() {
     <main class="app-shell sky-scene landing-scene">
       <section class="landing-card toy-gloss">
         <div class="logo-boat" aria-hidden="true"><div class="mini-mast"></div><div class="mini-sail"></div><div class="mini-hull"></div></div>
-        <p class="eyebrow">v0.6.0 mobile-first voyage adventure</p>
+        <p class="eyebrow">v0.7.0 animated voyage adventure</p>
         <h1>Treasure Crew</h1>
         <p>Two players join by room code or QR, claim Captain and Engineer seats, then play through short voyage chapters filled with communication games, word play, sorting, and repair puzzles.</p>
         <label class="field-label">Crew name<input id="crewName" value="${escapeHtml(state.name)}" placeholder="Rochelle" /></label>
@@ -428,6 +498,8 @@ function renderGame() {
         ${tabButton("manual", "Manual")}
       </nav>
 
+      ${persistentAvatarStrip(room)}
+
       ${activeTab === "voyage" ? renderVoyageTab(room, seat, chapter) : ""}
       ${activeTab === "puzzle" ? renderPuzzleTab(room, seat, captainName, engineerName, task) : ""}
       ${activeTab === "hangar" ? renderHangarTab(room, seat) : ""}
@@ -439,6 +511,7 @@ function renderGame() {
 
   bindGameEvents();
   if (task && activeTab === "puzzle" && room.encounter.phase === "challenge" && seat) mountTask(task, seat);
+  syncSceneRuntime();
 }
 
 function tabButton(id, label) {
@@ -505,14 +578,7 @@ function voyageSceneMarkup(room) {
       </div>
       <span class="scene-pill">${escapeHtml(room.sceneSnapshot?.state || "idle-cruise")}</span>
     </div>
-    <div class="diorama-stage">
-      ${largeSceneModel(entries[5][1], "environment")}
-      <div class="diorama-foreground">
-        ${sceneAssetPill(entries[0][0], entries[0][1], "hero")}
-        ${sceneAssetPill(entries[4][0], entries[4][1], room.sceneSnapshot?.state === "treasure-sighting" ? "spotlight" : "")}
-        ${sceneAssetPill(entries[3][0], entries[3][1], room.sceneSnapshot?.state === "pirate-approach" ? "spotlight" : "")}
-      </div>
-    </div>
+    <div class="diorama-stage" data-scene-host="hero-scene" data-scene-mode="hero"></div>
     <div class="diorama-crew-grid">
       ${sceneAssetPill(entries[1][0], entries[1][1])}
       ${sceneAssetPill(entries[2][0], entries[2][1])}
@@ -520,14 +586,6 @@ function voyageSceneMarkup(room) {
       ${sceneAssetPill("Captain Seat", modelById("seats", equipped.captainSeat || "seat-navy"))}
       ${sceneAssetPill("Engineer Seat", modelById("seats", equipped.engineerSeat || "seat-navy"))}
     </div>`;
-}
-
-function largeSceneModel(item, key) {
-  const status = assetStatusFor(item.src);
-  if (item.src && status === "ready") {
-    return `<model-viewer class="scene-environment" src="${escapeHtml(publicAssetPath(item.src))}" camera-controls auto-rotate interaction-prompt="none" shadow-intensity="0.7" exposure="1" alt="${escapeHtml(item.name || key)}"></model-viewer>`;
-  }
-  return `<div class="scene-environment fallback"><span>${previewIcon("environments", key)}</span></div>`;
 }
 
 function sceneAssetPill(label, item, extraClass = "") {
@@ -593,6 +651,18 @@ function renderPuzzleTab(room, seat, captainName, engineerName, task) {
         ${assetSummaryMarkup(room)}
       </aside>
     </section>`;
+}
+
+function persistentAvatarStrip(room) {
+  const anim = room.sceneSnapshot?.animationState || {};
+  return html`<section class="avatar-dock-panel toy-gloss">
+    <div class="avatar-dock-copy">
+      <p class="eyebrow">live crew strip</p>
+      <strong>${escapeHtml(room.currentChapter.title)}</strong>
+      <span>${escapeHtml(anim.phase || room.encounter.phase)} · ${escapeHtml(anim.highlightSeat || "shared focus")}</span>
+    </div>
+    <div class="avatar-dock-host" data-scene-host="avatar-dock" data-scene-mode="dock"></div>
+  </section>`;
 }
 
 function puzzleStatusCopy(room, seat) {
@@ -872,6 +942,9 @@ function largePreviewMarkup(category, item, status) {
   const local = state.ui.localPreview;
   if (local) {
     return `<div class="large-model-preview local"><div class="preview-badge">local preview only</div>${modelViewerMarkup(local.src, local.name, "large", true)}<strong>${escapeHtml(local.name)}</strong><small>This file is previewed from your device and is not uploaded. Copy it into the matching folder to make it part of the hosted game.</small></div>`;
+  }
+  if (["players", "pirates"].includes(category) && item.src && status === "ready") {
+    return `<div class="large-model-preview ready animated-preview"><div class="preview-badge">animated preview</div><div class="character-scene-preview" data-scene-host="hangar-preview" data-scene-mode="preview" data-preview-category="${escapeHtml(category)}" data-preview-asset-id="${escapeHtml(item.id)}"></div><strong>${escapeHtml(item.name)}</strong><small>Character-ready preview using the Three.js runtime with animation fallbacks.</small></div>`;
   }
   if (item.src && status === "ready") {
     return `<div class="large-model-preview ready">${modelViewerMarkup(item.src, item.name, "large")}<strong>${escapeHtml(item.name)}</strong><small>Ready from manifest path</small></div>`;

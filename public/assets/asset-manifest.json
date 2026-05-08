@@ -1,6 +1,6 @@
 {
-  "version": "0.5.3",
-  "notes": "V0.5.3 includes generated placeholder GLB models and 512x512 PNG thumbnails for every expected asset path. Replace placeholders with real files using the same filenames.",
+  "version": "0.7.0",
+  "notes": "V0.7.0 adds runtime animation metadata and a bundled 3D scene pipeline. FBX clips are source-only authoring assets; runtime delivery should use converted GLB clips.",
   "models": {
     "players": [
       {
@@ -10,6 +10,10 @@
         "thumbnail": "",
         "slot": "crew",
         "sceneRole": "captain-player",
+        "animationSet": "crew-core",
+        "defaultIdle": "sitting",
+        "supportedClips": ["sitting", "standing-greeting", "silly-dancing", "sitting-clap", "sitting-laughing"],
+        "characterRig": "crew-biped",
         "status": "css-fallback",
         "scale": 1,
         "rotation": [
@@ -25,6 +29,10 @@
         "thumbnail": "assets/thumbnails/players/player-captain.png",
         "slot": "crew",
         "sceneRole": "captain-player",
+        "animationSet": "crew-core",
+        "defaultIdle": "sitting",
+        "supportedClips": ["sitting", "standing-greeting", "silly-dancing", "sitting-clap", "sitting-laughing"],
+        "characterRig": "crew-biped",
         "status": "placeholder-ready",
         "scale": 1,
         "rotation": [
@@ -36,6 +44,54 @@
           512,
           512
         ]
+      },
+      {
+        "id": "sailor-kyle",
+        "name": "Sailor Kyle",
+        "src": "assets/models/players/sailor_kyle.glb",
+        "thumbnail": "",
+        "slot": "crew",
+        "sceneRole": "captain-player",
+        "animationSet": "crew-core",
+        "defaultIdle": "standing-greeting",
+        "supportedClips": ["standing-greeting", "walking", "jogging", "joyful-jump", "button-pushing"],
+        "characterRig": "crew-biped",
+        "status": "runtime-ready",
+        "scale": 1,
+        "rotation": [0, 0, 0],
+        "chapterTags": ["harbor-launch", "storm-repair"]
+      },
+      {
+        "id": "sailor-rochelle",
+        "name": "Sailor Rochelle",
+        "src": "assets/models/players/sailor_rochelle.glb",
+        "thumbnail": "",
+        "slot": "crew",
+        "sceneRole": "engineer-player",
+        "animationSet": "crew-core",
+        "defaultIdle": "sitting",
+        "supportedClips": ["sitting", "sitting-and-pointing", "opening", "pick-fruit", "dig-and-plant-seeds"],
+        "characterRig": "crew-biped",
+        "status": "runtime-ready",
+        "scale": 1,
+        "rotation": [0, 0, 0],
+        "chapterTags": ["treasure-waters"]
+      },
+      {
+        "id": "sailor-vickie",
+        "name": "Sailor Vickie",
+        "src": "assets/models/players/sailor_vickie.glb",
+        "thumbnail": "",
+        "slot": "crew",
+        "sceneRole": "engineer-player",
+        "animationSet": "crew-core",
+        "defaultIdle": "sitting",
+        "supportedClips": ["sitting", "sitting-clap", "surprised", "climbing-ladder"],
+        "characterRig": "crew-biped",
+        "status": "runtime-ready",
+        "scale": 1,
+        "rotation": [0, 0, 0],
+        "chapterTags": ["pirate-intercept", "storm-repair"]
       }
     ],
     "pirates": [
@@ -46,6 +102,10 @@
         "thumbnail": "assets/thumbnails/pirates/pirate-default.png",
         "slot": "enemy",
         "sceneRole": "pirate-captain",
+        "animationSet": "pirate-core",
+        "defaultIdle": "hanging-idle",
+        "supportedClips": ["stable-sword-inward-slash", "surprised", "hanging-idle", "walking"],
+        "characterRig": "pirate-biped",
         "status": "placeholder-ready",
         "scale": 1,
         "rotation": [
@@ -57,6 +117,38 @@
           512,
           512
         ]
+      },
+      {
+        "id": "pirate-one",
+        "name": "Pirate Mate One",
+        "src": "assets/models/pirates/pirate_1.glb",
+        "thumbnail": "",
+        "slot": "enemy",
+        "sceneRole": "pirate-captain",
+        "animationSet": "pirate-core",
+        "defaultIdle": "hanging-idle",
+        "supportedClips": ["stable-sword-inward-slash", "surprised", "walking"],
+        "characterRig": "pirate-biped",
+        "status": "runtime-ready",
+        "scale": 1,
+        "rotation": [0, 0, 0],
+        "chapterTags": ["pirate-intercept"]
+      },
+      {
+        "id": "pirate-two",
+        "name": "Pirate Mate Two",
+        "src": "assets/models/pirates/pirate_2.glb",
+        "thumbnail": "",
+        "slot": "enemy",
+        "sceneRole": "pirate-captain",
+        "animationSet": "pirate-core",
+        "defaultIdle": "hanging-idle",
+        "supportedClips": ["stable-sword-inward-slash", "surprised", "walking"],
+        "characterRig": "pirate-biped",
+        "status": "runtime-ready",
+        "scale": 1,
+        "rotation": [0, 0, 0],
+        "chapterTags": ["pirate-intercept"]
       }
     ],
     "boats": [
@@ -242,5 +334,10 @@
     "wordTileFrame": "assets/minigames/word/word-tile-frame.svg",
     "liquidTube": "assets/minigames/maintenance/liquid-tube.svg",
     "treasureX": "assets/minigames/treasure/treasure-x.svg"
+  },
+  "animations": {
+    "sourceRoot": "assets/thumbnails/animations",
+    "runtimeRoot": "assets/animations/runtime",
+    "catalog": "assets/animations/animation-catalog.json"
   }
 }

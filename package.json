@@ -1,11 +1,20 @@
 {
   "name": "treasure-crew-v05-2",
-  "version": "0.5.3",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "build:scene": "node scripts/build-animation-catalog.mjs && node scripts/build-scene-runtime.mjs",
+    "predev": "npm run build:scene",
     "dev": "node server.js",
+    "prestart": "npm run build:scene",
     "start": "node server.js"
+  },
+  "dependencies": {
+    "three": "^0.176.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.4"
   },
   "engines": {
     "node": ">=20"
