@@ -1,0 +1,225 @@
+{
+  "version": "0.5.3",
+  "notes": "V0.5.3 includes generated placeholder GLB models and 512x512 PNG thumbnails for every expected asset path. Replace placeholders with real files using the same filenames.",
+  "models": {
+    "players": [
+      {
+        "id": "player-default",
+        "name": "Default Crew Toy",
+        "src": "",
+        "thumbnail": "",
+        "slot": "crew",
+        "status": "css-fallback",
+        "scale": 1,
+        "rotation": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "player-captain",
+        "name": "Captain Variant",
+        "src": "assets/models/players/player-captain.glb",
+        "thumbnail": "assets/thumbnails/players/player-captain.png",
+        "slot": "crew",
+        "status": "placeholder-ready",
+        "scale": 1,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "thumbnailSize": [
+          512,
+          512
+        ]
+      }
+    ],
+    "pirates": [
+      {
+        "id": "pirate-default",
+        "name": "Pirate Toy Enemy",
+        "src": "assets/models/pirates/pirate-default.glb",
+        "thumbnail": "assets/thumbnails/pirates/pirate-default.png",
+        "slot": "enemy",
+        "status": "placeholder-ready",
+        "scale": 1,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "thumbnailSize": [
+          512,
+          512
+        ]
+      }
+    ],
+    "boats": [
+      {
+        "id": "boat-glossy-sloop",
+        "name": "Glossy Sloop",
+        "src": "assets/models/boats/boat-glossy-sloop.glb",
+        "thumbnail": "assets/thumbnails/boats/boat-glossy-sloop.png",
+        "slot": "player-boat",
+        "status": "placeholder-ready",
+        "scale": 1,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "thumbnailSize": [
+          512,
+          512
+        ]
+      },
+      {
+        "id": "boat-pirate-brown",
+        "name": "Brown Pirate Ship",
+        "src": "assets/models/boats/boat-pirate-brown.glb",
+        "thumbnail": "assets/thumbnails/boats/boat-pirate-brown.png",
+        "slot": "pirate-boat",
+        "status": "placeholder-ready",
+        "scale": 1,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "thumbnailSize": [
+          512,
+          512
+        ]
+      }
+    ],
+    "islands": [
+      {
+        "id": "island-berry-cove",
+        "name": "Berry Cove Island",
+        "src": "assets/models/islands/island-berry-cove.glb",
+        "thumbnail": "assets/thumbnails/islands/island-berry-cove.png",
+        "slot": "treasure-island",
+        "status": "placeholder-ready",
+        "scale": 1,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "thumbnailSize": [
+          512,
+          512
+        ]
+      }
+    ],
+    "environments": [
+      {
+        "id": "env-sky-cockpit",
+        "name": "Sky Cockpit Environment",
+        "src": "assets/models/environments/env-sky-cockpit.glb",
+        "thumbnail": "assets/thumbnails/environments/env-sky-cockpit.png",
+        "slot": "environment",
+        "status": "placeholder-ready",
+        "scale": 1,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "thumbnailSize": [
+          512,
+          512
+        ]
+      }
+    ],
+    "steeringWheels": [
+      {
+        "id": "wheel-classic",
+        "name": "Classic Toy Wheel",
+        "src": "",
+        "thumbnail": "",
+        "slot": "cockpit-wheel",
+        "unlockAtManualPages": 0,
+        "status": "css-fallback"
+      },
+      {
+        "id": "wheel-brass",
+        "name": "Royal Brass Wheel",
+        "src": "assets/models/steering-wheels/wheel-brass.glb",
+        "thumbnail": "assets/thumbnails/steering-wheels/wheel-brass.png",
+        "slot": "cockpit-wheel",
+        "unlockAtManualPages": 1,
+        "status": "placeholder-ready",
+        "thumbnailSize": [
+          512,
+          512
+        ]
+      },
+      {
+        "id": "wheel-pirate",
+        "name": "Pirate Bone Wheel",
+        "src": "assets/models/steering-wheels/wheel-pirate.glb",
+        "thumbnail": "assets/thumbnails/steering-wheels/wheel-pirate.png",
+        "slot": "cockpit-wheel",
+        "unlockAtManualPages": 3,
+        "status": "placeholder-ready",
+        "thumbnailSize": [
+          512,
+          512
+        ]
+      }
+    ],
+    "seats": [
+      {
+        "id": "seat-navy",
+        "name": "Navy Captain Chair",
+        "src": "",
+        "thumbnail": "",
+        "slot": "player-seat",
+        "unlockAtManualPages": 0,
+        "status": "css-fallback"
+      },
+      {
+        "id": "seat-cream",
+        "name": "Cloud Cream Chair",
+        "src": "assets/models/seats/seat-cream.glb",
+        "thumbnail": "assets/thumbnails/seats/seat-cream.png",
+        "slot": "player-seat",
+        "unlockAtManualPages": 2,
+        "status": "placeholder-ready",
+        "thumbnailSize": [
+          512,
+          512
+        ]
+      },
+      {
+        "id": "seat-pirate",
+        "name": "Pirate Red Chair",
+        "src": "assets/models/seats/seat-pirate.glb",
+        "thumbnail": "assets/thumbnails/seats/seat-pirate.png",
+        "slot": "player-seat",
+        "unlockAtManualPages": 4,
+        "status": "placeholder-ready",
+        "thumbnailSize": [
+          512,
+          512
+        ]
+      }
+    ]
+  },
+  "gui": {
+    "coin": "assets/gui/coin.svg",
+    "pearl": "assets/gui/pearl.svg",
+    "gem": "assets/gui/gem.svg",
+    "berry": "assets/gui/berry.svg",
+    "pirateFlag": "assets/gui/pirate-flag.svg",
+    "radioWave": "assets/gui/radio-wave.svg"
+  },
+  "minigames": {
+    "wordTileFrame": "assets/minigames/word/word-tile-frame.svg",
+    "liquidTube": "assets/minigames/maintenance/liquid-tube.svg",
+    "treasureX": "assets/minigames/treasure/treasure-x.svg"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "treasure-crew-v05-2",
+  "version": "0.5.3",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
