@@ -4,12 +4,12 @@ const ROLE_COPY = {
   captain: {
     eyebrow: "Radio + Navigation",
     title: "Captain Seat",
-    description: "Call out radio clues, solve word screens, and keep the GPS route readable.",
+    description: "Reads clues, restores phrases, and keeps the shared route understandable.",
   },
   engineer: {
     eyebrow: "Maintenance + Repair",
     title: "Engineer Seat",
-    description: "Sort fluids, repair circuits, match parts, and keep the boat alive.",
+    description: "Sorts systems, balances repairs, and executes the Captain's callouts.",
   },
 };
 
@@ -20,39 +20,52 @@ const WORD_GRIDS = {
 
 const LIQUID_START = [["sun", "sea", "rose", "sun"], ["sea", "rose", "mint", "mint"], ["rose", "sun", "sea", "mint"], []];
 const MATCHING_ICONS = ["⚓", "🧭", "🔧", "💡"];
-const MANUAL_SECTIONS = ["Emergency Startup", "Navigation Glossary", "Treasure Protocol", "Pirate Defense", "Storm Calls", "Secret Upgrades"];
-
+const MANUAL_SECTIONS = ["Launch Rituals", "Treasure Protocol", "Pirate Calm", "Storm Recovery", "Signal Etiquette", "Voyage Lore"];
+const SIGNAL_SET = ["wave", "flag", "bell", "star", "sun", "anchor"];
+const SIGNAL_ICONS = { wave: "〰️", flag: "🚩", bell: "🔔", star: "⭐", sun: "☀️", anchor: "⚓" };
+const PULSE_COLORS = { amber: "🟡", blue: "🔵", green: "🟢", rose: "🩷" };
+const CARGO_ITEMS = [
+  { id: "apple", label: "Apple Crate", group: "fruit", icon: "🍎" },
+  { id: "berry", label: "Berry Basket", group: "fruit", icon: "🫐" },
+  { id: "pear", label: "Pear Box", group: "fruit", icon: "🍐" },
+  { id: "hammer", label: "Hammer Kit", group: "tools", icon: "🔨" },
+  { id: "wrench", label: "Wrench Tin", group: "tools", icon: "🔧" },
+  { id: "bolt", label: "Bolt Jar", group: "tools", icon: "🪛" },
+  { id: "coin", label: "Coin Chest", group: "treasure", icon: "🪙" },
+  { id: "gem", label: "Gem Crate", group: "treasure", icon: "💎" },
+  { id: "pearl", label: "Pearl Bowl", group: "treasure", icon: "🦪" },
+];
 
 const FALLBACK_ASSET_MANIFEST = {
-  version: "0.5.3",
+  version: "0.6.0",
   notes: "Drop real GLB/GLTF files into the listed folders, then keep ids stable so unlocks and equipped loadouts remain valid.",
   models: {
     players: [
-      { id: "player-default", name: "Default Crew Toy", src: "", thumbnail: "", slot: "crew", status: "css-fallback", scale: 1, rotation: [0, 0, 0] },
-      { id: "player-captain", name: "Captain Variant", src: "assets/models/players/player-captain.glb", thumbnail: "assets/thumbnails/players/player-captain.png", slot: "crew", status: "drop-your-model", scale: 1, rotation: [0, 0, 0] },
+      { id: "player-default", name: "Default Crew Toy", src: "", thumbnail: "", slot: "crew", sceneRole: "captain-player", status: "css-fallback", scale: 1, rotation: [0, 0, 0] },
+      { id: "player-captain", name: "Captain Variant", src: "assets/models/players/player-captain.glb", thumbnail: "assets/thumbnails/players/player-captain.png", slot: "crew", sceneRole: "captain-player", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["harbor-launch", "treasure-waters"] },
     ],
     pirates: [
-      { id: "pirate-default", name: "Pirate Toy Enemy", src: "assets/models/pirates/pirate-default.glb", thumbnail: "assets/thumbnails/pirates/pirate-default.png", slot: "enemy", status: "drop-your-model", scale: 1, rotation: [0, 0, 0] },
+      { id: "pirate-default", name: "Pirate Toy Enemy", src: "assets/models/pirates/pirate-default.glb", thumbnail: "assets/thumbnails/pirates/pirate-default.png", slot: "enemy", sceneRole: "pirate-captain", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], chapterTags: ["pirate-intercept"] },
     ],
     boats: [
-      { id: "boat-glossy-sloop", name: "Glossy Sloop", src: "assets/models/boats/boat-glossy-sloop.glb", thumbnail: "assets/thumbnails/boats/boat-glossy-sloop.png", slot: "player-boat", status: "drop-your-model", scale: 1, rotation: [0, 0, 0] },
-      { id: "boat-pirate-brown", name: "Brown Pirate Ship", src: "assets/models/boats/boat-pirate-brown.glb", thumbnail: "assets/thumbnails/boats/boat-pirate-brown.png", slot: "pirate-boat", status: "drop-your-model", scale: 1, rotation: [0, 0, 0] },
+      { id: "boat-glossy-sloop", name: "Glossy Sloop", src: "assets/models/boats/boat-glossy-sloop.glb", thumbnail: "assets/thumbnails/boats/boat-glossy-sloop.png", slot: "player-boat", sceneRole: "player-boat", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], position: [0, 0, 0] },
+      { id: "boat-pirate-brown", name: "Brown Pirate Ship", src: "assets/models/boats/boat-pirate-brown.glb", thumbnail: "assets/thumbnails/boats/boat-pirate-brown.png", slot: "pirate-boat", sceneRole: "pirate-boat", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], position: [1, 0, 0], chapterTags: ["pirate-intercept"] },
     ],
     islands: [
-      { id: "island-berry-cove", name: "Berry Cove Island", src: "assets/models/islands/island-berry-cove.glb", thumbnail: "assets/thumbnails/islands/island-berry-cove.png", slot: "treasure-island", status: "drop-your-model", scale: 1, rotation: [0, 0, 0] },
+      { id: "island-berry-cove", name: "Berry Cove Island", src: "assets/models/islands/island-berry-cove.glb", thumbnail: "assets/thumbnails/islands/island-berry-cove.png", slot: "treasure-island", sceneRole: "treasure-island", status: "drop-your-model", scale: 1, rotation: [0, 0, 0], position: [0, 0, -1], chapterTags: ["treasure-waters"] },
     ],
     environments: [
-      { id: "env-sky-cockpit", name: "Sky Cockpit Environment", src: "assets/models/environments/env-sky-cockpit.glb", thumbnail: "assets/thumbnails/environments/env-sky-cockpit.png", slot: "environment", status: "drop-your-model", scale: 1, rotation: [0, 0, 0] },
+      { id: "env-sky-cockpit", name: "Sky Cockpit Environment", src: "assets/models/environments/env-sky-cockpit.glb", thumbnail: "assets/thumbnails/environments/env-sky-cockpit.png", slot: "environment", sceneRole: "environment", status: "drop-your-model", scale: 1, rotation: [0, 0, 0] },
     ],
     steeringWheels: [
-      { id: "wheel-classic", name: "Classic Toy Wheel", src: "", thumbnail: "", slot: "cockpit-wheel", unlockAtManualPages: 0, status: "css-fallback" },
-      { id: "wheel-brass", name: "Royal Brass Wheel", src: "assets/models/steering-wheels/wheel-brass.glb", thumbnail: "assets/thumbnails/steering-wheels/wheel-brass.png", slot: "cockpit-wheel", unlockAtManualPages: 1, status: "drop-your-model" },
-      { id: "wheel-pirate", name: "Pirate Bone Wheel", src: "assets/models/steering-wheels/wheel-pirate.glb", thumbnail: "assets/thumbnails/steering-wheels/wheel-pirate.png", slot: "cockpit-wheel", unlockAtManualPages: 3, status: "drop-your-model" },
+      { id: "wheel-classic", name: "Classic Toy Wheel", src: "", thumbnail: "", slot: "cockpit-wheel", sceneRole: "cockpit-wheel", unlockAtManualPages: 0, status: "css-fallback" },
+      { id: "wheel-brass", name: "Royal Brass Wheel", src: "assets/models/steering-wheels/wheel-brass.glb", thumbnail: "assets/thumbnails/steering-wheels/wheel-brass.png", slot: "cockpit-wheel", sceneRole: "cockpit-wheel", unlockAtManualPages: 1, status: "drop-your-model", chapterTags: ["harbor-launch"] },
+      { id: "wheel-pirate", name: "Pirate Bone Wheel", src: "assets/models/steering-wheels/wheel-pirate.glb", thumbnail: "assets/thumbnails/steering-wheels/wheel-pirate.png", slot: "cockpit-wheel", sceneRole: "cockpit-wheel", unlockAtManualPages: 3, status: "drop-your-model", chapterTags: ["pirate-intercept"] },
     ],
     seats: [
-      { id: "seat-navy", name: "Navy Captain Chair", src: "", thumbnail: "", slot: "player-seat", unlockAtManualPages: 0, status: "css-fallback" },
-      { id: "seat-cream", name: "Cloud Cream Chair", src: "assets/models/seats/seat-cream.glb", thumbnail: "assets/thumbnails/seats/seat-cream.png", slot: "player-seat", unlockAtManualPages: 2, status: "drop-your-model" },
-      { id: "seat-pirate", name: "Pirate Red Chair", src: "assets/models/seats/seat-pirate.glb", thumbnail: "assets/thumbnails/seats/seat-pirate.png", slot: "player-seat", unlockAtManualPages: 4, status: "drop-your-model" },
+      { id: "seat-navy", name: "Navy Captain Chair", src: "", thumbnail: "", slot: "player-seat", sceneRole: "captain-seat", unlockAtManualPages: 0, status: "css-fallback" },
+      { id: "seat-cream", name: "Cloud Cream Chair", src: "assets/models/seats/seat-cream.glb", thumbnail: "assets/thumbnails/seats/seat-cream.png", slot: "player-seat", sceneRole: "engineer-seat", unlockAtManualPages: 2, status: "drop-your-model" },
+      { id: "seat-pirate", name: "Pirate Red Chair", src: "assets/models/seats/seat-pirate.glb", thumbnail: "assets/thumbnails/seats/seat-pirate.png", slot: "player-seat", sceneRole: "engineer-seat", unlockAtManualPages: 4, status: "drop-your-model", chapterTags: ["pirate-intercept"] },
     ],
   },
   gui: {
@@ -82,8 +95,8 @@ const HANGAR_CATEGORIES = [
 
 const state = {
   room: null,
-  playerId: localStorage.getItem("tcV05PlayerId") || "",
-  code: localStorage.getItem("tcV05RoomCode") || "",
+  playerId: localStorage.getItem("tcV06PlayerId") || "",
+  code: new URLSearchParams(location.search).get("room") || localStorage.getItem("tcV06RoomCode") || "",
   name: localStorage.getItem("tcCrewName") || "",
   stream: null,
   error: "",
@@ -91,7 +104,8 @@ const state = {
   assetStatus: {},
   assetScanStarted: false,
   ui: {
-    hangarCategory: localStorage.getItem("tcV05HangarCategory") || "players",
+    activeTab: localStorage.getItem("tcV06Tab") || "voyage",
+    hangarCategory: localStorage.getItem("tcV06HangarCategory") || "players",
     hangarSelection: {},
     localPreview: null,
   },
@@ -121,6 +135,35 @@ async function api(path, payload) {
   return data;
 }
 
+function setHistoryRoom(code = "") {
+  const next = new URL(location.href);
+  if (code) next.searchParams.set("room", code);
+  else next.searchParams.delete("room");
+  history.replaceState({}, "", next);
+}
+
+function setName(value) {
+  state.name = value;
+  localStorage.setItem("tcCrewName", value);
+}
+
+function setActiveTab(tab) {
+  state.ui.activeTab = tab;
+  localStorage.setItem("tcV06Tab", tab);
+  render();
+}
+
+function modelItems(category) {
+  return state.assetManifest?.models?.[category] || [];
+}
+
+function modelById(category, id) {
+  return modelItems(category).find((item) => item.id === id) || { id, name: id, src: "" };
+}
+
+function safeClass(value) {
+  return String(value || "default").replace(/[^a-z0-9_-]/gi, "-").toLowerCase();
+}
 
 async function loadAssetManifest() {
   try {
@@ -153,21 +196,51 @@ function mergeManifest(base, incoming) {
   };
 }
 
-function safeClass(value) {
-  return String(value || "default").replace(/[^a-z0-9_-]/gi, "-").toLowerCase();
+function normalizeAssetPath(src) {
+  return String(src || "").replace(/^\/+/, "");
 }
 
-function modelItems(category) {
-  return state.assetManifest?.models?.[category] || [];
+function publicAssetPath(src) {
+  if (!src) return "";
+  return `/${normalizeAssetPath(src)}`;
 }
 
-function modelById(category, id) {
-  return modelItems(category).find((item) => item.id === id) || { id, name: id, src: "" };
+function assetStatusFor(src) {
+  if (!src) return "fallback";
+  const key = normalizeAssetPath(src);
+  if (!(key in state.assetStatus)) return "checking";
+  return state.assetStatus[key] ? "ready" : "missing";
 }
 
-function setName(value) {
-  state.name = value;
-  localStorage.setItem("tcCrewName", value);
+function statusLabel(status) {
+  return { ready: "file ready", missing: "missing file", checking: "checking", fallback: "fallback" }[status] || status;
+}
+
+function collectAssetPaths() {
+  const modelPaths = Object.values(state.assetManifest?.models || {})
+    .flat()
+    .flatMap((item) => [item.src, item.thumbnail])
+    .filter(Boolean);
+  const guiPaths = Object.values(state.assetManifest?.gui || {}).filter(Boolean);
+  const minigamePaths = Object.values(state.assetManifest?.minigames || {}).filter(Boolean);
+  return [...new Set([...modelPaths, ...guiPaths, ...minigamePaths].map(normalizeAssetPath))];
+}
+
+async function scanAssetStatus() {
+  if (state.assetScanStarted) return;
+  state.assetScanStarted = true;
+  const paths = collectAssetPaths();
+  await Promise.all(
+    paths.map(async (src) => {
+      try {
+        const response = await fetch(`/${src}`, { method: "HEAD", cache: "no-store" });
+        state.assetStatus[src] = response.ok;
+      } catch {
+        state.assetStatus[src] = false;
+      }
+    }),
+  );
+  render();
 }
 
 function connectStream(code) {
@@ -176,11 +249,13 @@ function connectStream(code) {
   state.stream.onmessage = (event) => {
     state.room = JSON.parse(event.data);
     state.code = state.room.code;
-    localStorage.setItem("tcV05RoomCode", state.code);
+    localStorage.setItem("tcV06RoomCode", state.code);
+    setHistoryRoom(state.code);
     render();
   };
   state.stream.onerror = () => {
     state.error = "Live sync is reconnecting. Refresh or rejoin if it stays paused.";
+    render();
   };
 }
 
@@ -191,8 +266,9 @@ async function createRoom() {
     state.room = data.room;
     state.playerId = data.playerId;
     state.code = data.code;
-    localStorage.setItem("tcV05PlayerId", state.playerId);
-    localStorage.setItem("tcV05RoomCode", state.code);
+    localStorage.setItem("tcV06PlayerId", state.playerId);
+    localStorage.setItem("tcV06RoomCode", state.code);
+    setHistoryRoom(state.code);
     connectStream(state.code);
     render();
   } catch (error) {
@@ -209,8 +285,9 @@ async function joinRoom() {
     state.room = data.room;
     state.playerId = data.playerId;
     state.code = data.code;
-    localStorage.setItem("tcV05PlayerId", state.playerId);
-    localStorage.setItem("tcV05RoomCode", state.code);
+    localStorage.setItem("tcV06PlayerId", state.playerId);
+    localStorage.setItem("tcV06RoomCode", state.code);
+    setHistoryRoom(state.code);
     connectStream(state.code);
     render();
   } catch (error) {
@@ -220,7 +297,7 @@ async function joinRoom() {
 }
 
 function action(type, payload = {}) {
-  if (!state.room || !state.playerId) return;
+  if (!state.room) return Promise.resolve();
   return api("/api/action", { code: state.room.code, playerId: state.playerId, type, payload }).catch((error) => {
     state.error = error.message;
     render();
@@ -232,9 +309,31 @@ function leaveRoom() {
   state.room = null;
   state.playerId = "";
   state.code = "";
-  localStorage.removeItem("tcV05PlayerId");
-  localStorage.removeItem("tcV05RoomCode");
+  localStorage.removeItem("tcV06PlayerId");
+  localStorage.removeItem("tcV06RoomCode");
+  setHistoryRoom("");
   render();
+}
+
+function roomJoinUrl(room) {
+  return `${location.origin}${room.joinUrl || `/?room=${encodeURIComponent(room.code)}`}`;
+}
+
+function roleTask(room, role) {
+  return room?.tasks?.[role];
+}
+
+function me() {
+  return state.room?.players?.[state.playerId] || null;
+}
+
+function mySeat() {
+  return me()?.seat || null;
+}
+
+function currentRoleTask(room) {
+  const seat = mySeat();
+  return seat ? roleTask(room, seat) : null;
 }
 
 function render() {
@@ -243,158 +342,309 @@ function render() {
 }
 
 function renderLanding() {
+  const invite = state.code ? `${location.origin}/?room=${encodeURIComponent(state.code)}` : "";
+  const qrUrl = invite ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(invite)}` : "";
   app.innerHTML = html`
-    <main class="app-shell sky-scene">
+    <main class="app-shell sky-scene landing-scene">
       <section class="landing-card toy-gloss">
         <div class="logo-boat" aria-hidden="true"><div class="mini-mast"></div><div class="mini-sail"></div><div class="mini-hull"></div></div>
-        <p class="eyebrow">v0.5.3 3D hangar + asset gallery</p>
-        <h1>Treasure Crew Co-op</h1>
-        <p>A two-player cockpit puzzle game with a built-in 3D hangar. Drop in your GLB/GLTF player, pirate, boat, island, environment, steering wheel, and seat models, then preview, equip, and sync them across the room.</p>
+        <p class="eyebrow">v0.6.0 mobile-first voyage adventure</p>
+        <h1>Treasure Crew</h1>
+        <p>Two players join by room code or QR, claim Captain and Engineer seats, then play through short voyage chapters filled with communication games, word play, sorting, and repair puzzles.</p>
         <label class="field-label">Crew name<input id="crewName" value="${escapeHtml(state.name)}" placeholder="Rochelle" /></label>
         <div class="landing-actions">
-          <button class="primary-button" id="createRoom">Create Room</button>
-          <div class="join-row"><input id="joinCode" placeholder="ROOM" maxlength="5" value="${escapeHtml(state.code)}" /><button id="joinRoom">Join</button></div>
+          <button class="primary-button" id="createRoom">Create Voyage Room</button>
+          <div class="join-row"><input id="joinCode" placeholder="ROOM" maxlength="5" value="${escapeHtml(state.code)}" /><button id="joinRoom">Join Room</button></div>
         </div>
-        <div class="status-pill">Node multiplayer server ready</div>
+        <div class="landing-meta">
+          <span class="status-pill">2-player cozy teamwork</span>
+          <span class="status-pill">room code + QR join</span>
+          <span class="status-pill">assets sync across the voyage</span>
+        </div>
+        ${invite ? `<div class="landing-qr-block"><img src="${escapeHtml(qrUrl)}" alt="QR join code" /><div><strong>Join link ready</strong><code>${escapeHtml(invite)}</code></div></div>` : ""}
         ${state.error ? `<p class="error-box">${escapeHtml(state.error)}</p>` : ""}
       </section>
     </main>`;
+
   const crewNameInput = app.querySelector("#crewName");
   const createRoomButton = app.querySelector("#createRoom");
   const joinRoomButton = app.querySelector("#joinRoom");
   const joinCodeInput = app.querySelector("#joinCode");
 
-  if (!crewNameInput || !createRoomButton || !joinRoomButton || !joinCodeInput) {
-    app.insertAdjacentHTML("beforeend", `<div class="mount-warning toy-gloss"><strong>Landing controls did not mount.</strong><br />Refresh once, then check that <code>/app.js</code> and <code>/styles.css</code> are loading from the same v0.5.3 folder.</div>`);
-    return;
-  }
-
+  if (!crewNameInput || !createRoomButton || !joinRoomButton || !joinCodeInput) return;
   crewNameInput.oninput = (event) => setName(event.target.value);
   createRoomButton.onclick = createRoom;
   joinRoomButton.onclick = joinRoom;
-  joinCodeInput.oninput = (event) => { event.target.value = event.target.value.toUpperCase(); };
+  joinCodeInput.oninput = (event) => {
+    event.target.value = event.target.value.toUpperCase();
+    state.code = event.target.value;
+  };
 }
 
 function renderGame() {
   const room = state.room;
-  const me = room.players[state.playerId];
-  const mySeat = me?.seat || null;
-  const players = Object.values(room.players || {});
-  const activeRole = mySeat || "captain";
-  const task = room.tasks[activeRole];
-  const stage = room.currentStage;
+  const player = me();
+  const seat = player?.seat || null;
+  const chapter = room.currentChapter;
+  const task = currentRoleTask(room);
+  const activeTab = state.ui.activeTab;
   const captainName = room.seats.captain ? room.players[room.seats.captain]?.name : "Open";
   const engineerName = room.seats.engineer ? room.players[room.seats.engineer]?.name : "Open";
 
   app.innerHTML = html`
-    <main class="app-shell sky-scene">
-      <header class="topbar toy-gloss">
-        <div><p class="eyebrow">room code</p><h1>${room.code}</h1></div>
-        <div class="crew-list">${players.map((player) => `<span class="crew-chip ${player.id === state.playerId ? "active" : ""}">${escapeHtml(player.name)} · ${player.seat || "observer"}</span>`).join("")}</div>
+    <main class="app-shell sky-scene voyage-shell mood-${safeClass(room.sceneSnapshot?.mood || "clear-sky")}">
+      <header class="topbar toy-gloss voyage-topbar">
+        <div>
+          <p class="eyebrow">room code</p>
+          <h1>${room.code}</h1>
+        </div>
+        <div class="crew-list">${Object.values(room.players || {}).map((crew) => `<span class="crew-chip ${crew.id === state.playerId ? "active" : ""}">${escapeHtml(crew.name)} · ${crew.seat || "observer"}</span>`).join("")}</div>
         <div class="topbar-actions">
           <button data-action="seat:claim" data-seat="captain">Captain</button>
           <button data-action="seat:claim" data-seat="engineer">Engineer</button>
-          <button class="accent-button" data-action="seat:swap">Swap seats</button>
+          <button class="accent-button" data-action="seat:swap">Swap</button>
+          <button data-local="share-room">Share</button>
           <button data-local="leave">Leave</button>
         </div>
       </header>
 
-      ${missionBannerMarkup(room, mySeat)}
-
-      <section class="game-layout">
-        ${cockpitMarkup(room, mySeat, captainName, engineerName)}
-        <aside class="role-panel toy-gloss">
-          <p class="eyebrow">your touchscreen</p>
-          <h2>${mySeat ? ROLE_COPY[mySeat].title : "Observer Mode"}</h2>
-          <p>${mySeat ? ROLE_COPY[mySeat].description : "Claim a seat to control this side of the cockpit."}</p>
-          ${mySeat ? directiveMarkup(room, mySeat) : `<p class="empty-note">Tap Captain or Engineer in the top bar to join a responsibility set.</p>`}
-          ${room.treasureHunt?.active ? treasureHuntMarkup(room.treasureHunt, mySeat) : ""}
-          ${mySeat && task && !room.treasureHunt?.active ? taskMarkup(task, activeRole) : ""}
-          ${manualMarkup(room.stats.manualPages)}
-          ${assetSummaryMarkup(room)}
-        </aside>
+      <section class="voyage-hero toy-gloss">
+        <div>
+          <p class="eyebrow">chapter ${room.campaign.chapterIndex + 1} · ${escapeHtml(chapter.theme)}</p>
+          <h2>${escapeHtml(chapter.title)}</h2>
+          <p>${escapeHtml(room.encounter.phase === "lobby" ? "Claim seats, inspect the route, and launch the voyage." : chapter.briefing)}</p>
+        </div>
+        <div class="voyage-status">
+          <span>${escapeHtml(room.encounter.phase)}</span>
+          <span>${escapeHtml(room.sceneSnapshot?.title || "")}</span>
+          <span>${room.encounter.timerEndsAt ? timeRemaining(room.encounter.timerEndsAt) : "untimed"}</span>
+        </div>
       </section>
 
-      ${hangarMarkup(room, mySeat)}
+      <nav class="voyage-tabs">
+        ${tabButton("voyage", "Voyage")}
+        ${tabButton("puzzle", "Puzzle")}
+        ${tabButton("hangar", "Hangar")}
+        ${tabButton("manual", "Manual")}
+      </nav>
 
-      <section class="mission-drawer toy-gloss">
-        ${statMarkup("Hull", room.stats.hull)}
-        ${statMarkup("Power", room.stats.power)}
-        ${statMarkup("Morale", room.stats.morale)}
-        ${statMarkup("Manual", Math.min(100, room.stats.manualPages * 18), `${room.stats.manualPages} pages`)}
-        ${statMarkup("Treasure", room.stats.treasure)}
-      </section>
+      ${activeTab === "voyage" ? renderVoyageTab(room, seat, chapter) : ""}
+      ${activeTab === "puzzle" ? renderPuzzleTab(room, seat, captainName, engineerName, task) : ""}
+      ${activeTab === "hangar" ? renderHangarTab(room, seat) : ""}
+      ${activeTab === "manual" ? renderManualTab(room) : ""}
 
-      <section class="log-card toy-gloss">
-        <div class="log-head"><h2>Captain's Log</h2><div class="quick-events"><button data-event="treasure-hunt">Treasure mode</button><button data-event="pirate-approach">Pirate mode</button></div></div>
-        ${room.log.map((item) => `<p>${escapeHtml(item.text)}</p>`).join("")}
-      </section>
-
+      ${state.error ? `<div class="toast-inline error-box">${escapeHtml(state.error)}</div>` : ""}
       ${room.lastSuccess ? `<div class="toast-success">${escapeHtml(room.lastSuccess.text)}</div>` : ""}
-      ${room.reveal ? revealMarkup(room.reveal) : ""}
-      ${room.event ? eventMarkup(room.event) : ""}
     </main>`;
 
   bindGameEvents();
-  if (mySeat && task) mountTask(task, activeRole);
+  if (task && activeTab === "puzzle" && room.encounter.phase === "challenge" && seat) mountTask(task, seat);
 }
 
-function missionBannerMarkup(room, mySeat) {
-  const stage = room.currentStage;
-  const checklist = room.mission.checklist;
-  const roleDirective = mySeat ? stage[mySeat] : "Claim a seat to see your role directive.";
-  const started = room.mission.started;
-  const stepNumber = room.mission.index + 1;
+function tabButton(id, label) {
+  return `<button class="voyage-tab ${state.ui.activeTab === id ? "active" : ""}" data-local="tab" data-tab="${id}">${label}</button>`;
+}
+
+function renderVoyageTab(room, seat, chapter) {
   return html`
-    <section class="mission-banner toy-gloss ${started ? "active" : "waiting"}">
-      <div>
-        <p class="eyebrow">${started ? `mission ${stepNumber}` : "preflight"}</p>
-        <h2>${started ? stage.title : "Start the First Voyage"}</h2>
-        <p>${started ? stage.brief : "Claim seats, then begin the guided first 5-minute demo round."}</p>
-      </div>
-      <div class="mission-checklist">
-        <span class="${checklist.captain ? "done" : ""}">Captain task</span>
-        <span class="${checklist.engineer ? "done" : ""}">Engineer task</span>
-      </div>
-      <div class="mission-directive">
-        <strong>Your directive</strong>
-        <span>${escapeHtml(started ? roleDirective : "Press Start Voyage when both players are ready.")}</span>
-      </div>
-      <button class="primary-button" data-action="mission:start">${started ? "Restart Voyage" : "Start Voyage"}</button>
+    <section class="voyage-grid">
+      <section class="voyage-scene-card toy-gloss">
+        ${voyageSceneMarkup(room)}
+      </section>
+      <aside class="voyage-sidebar">
+        <section class="voyage-panel toy-gloss">
+          <p class="eyebrow">shared briefing</p>
+          <h3>${escapeHtml(room.sceneSnapshot?.title || chapter.title)}</h3>
+          <p>${escapeHtml(room.sceneSnapshot?.callout || chapter.briefing)}</p>
+          <div class="directive-card ${room.scene.acknowledgedBy?.includes("captain") && room.scene.acknowledgedBy?.includes("engineer") ? "complete" : ""}">
+            <strong>${seat ? ROLE_COPY[seat].title : "Observer"}</strong>
+            <span>${escapeHtml(seat ? chapter[`${seat}Directive`] : "Claim a seat to receive a role directive.")}</span>
+          </div>
+          ${voyageActionPanel(room)}
+        </section>
+        <section class="voyage-panel toy-gloss">
+          <p class="eyebrow">voyage status</p>
+          <div class="stat-stack">
+            ${statMarkup("Hull", room.stats.hull)}
+            ${statMarkup("Power", room.stats.power)}
+            ${statMarkup("Morale", room.stats.morale)}
+            ${statMarkup("Progress", room.stats.progress)}
+            ${statMarkup("Treasure", room.stats.treasure, `${room.stats.treasure}`)}
+          </div>
+        </section>
+        <section class="voyage-panel toy-gloss">
+          <p class="eyebrow">join from phone</p>
+          <div class="room-qr-card">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(roomJoinUrl(room))}" alt="QR join code" />
+            <div>
+              <strong>Scan or share</strong>
+              <code>${escapeHtml(roomJoinUrl(room))}</code>
+            </div>
+          </div>
+        </section>
+      </aside>
     </section>`;
 }
 
-function directiveMarkup(room, role) {
-  const stage = room.currentStage;
-  const complete = room.mission.checklist[role];
-  return html`<div class="directive-card ${complete ? "complete" : ""}">
-    <p class="eyebrow">current role goal</p>
-    <strong>${complete ? "Complete — wait for your partner" : escapeHtml(stage[role])}</strong>
+function voyageSceneMarkup(room) {
+  const equipped = room.sceneSnapshot?.equipped || {};
+  const entries = [
+    ["Boat", modelById("boats", equipped.boat || "boat-glossy-sloop")],
+    ["Captain", modelById("players", equipped.captainPlayer || "player-default")],
+    ["Engineer", modelById("players", equipped.engineerPlayer || "player-default")],
+    ["Pirate", modelById("pirates", equipped.pirate || "pirate-default")],
+    ["Island", modelById("islands", equipped.island || "island-berry-cove")],
+    ["Environment", modelById("environments", equipped.environment || "env-sky-cockpit")],
+  ];
+  return html`
+    <div class="voyage-scene-head">
+      <div>
+        <p class="eyebrow">reactive diorama</p>
+        <h2>${escapeHtml(room.sceneSnapshot?.chapterTitle || "Voyage Scene")}</h2>
+        <p>${escapeHtml(room.sceneSnapshot?.subtitle || "")}</p>
+      </div>
+      <span class="scene-pill">${escapeHtml(room.sceneSnapshot?.state || "idle-cruise")}</span>
+    </div>
+    <div class="diorama-stage">
+      ${largeSceneModel(entries[5][1], "environment")}
+      <div class="diorama-foreground">
+        ${sceneAssetPill(entries[0][0], entries[0][1], "hero")}
+        ${sceneAssetPill(entries[4][0], entries[4][1], room.sceneSnapshot?.state === "treasure-sighting" ? "spotlight" : "")}
+        ${sceneAssetPill(entries[3][0], entries[3][1], room.sceneSnapshot?.state === "pirate-approach" ? "spotlight" : "")}
+      </div>
+    </div>
+    <div class="diorama-crew-grid">
+      ${sceneAssetPill(entries[1][0], entries[1][1])}
+      ${sceneAssetPill(entries[2][0], entries[2][1])}
+      ${sceneAssetPill("Wheel", modelById("steeringWheels", equipped.steeringWheel || "wheel-classic"))}
+      ${sceneAssetPill("Captain Seat", modelById("seats", equipped.captainSeat || "seat-navy"))}
+      ${sceneAssetPill("Engineer Seat", modelById("seats", equipped.engineerSeat || "seat-navy"))}
+    </div>`;
+}
+
+function largeSceneModel(item, key) {
+  const status = assetStatusFor(item.src);
+  if (item.src && status === "ready") {
+    return `<model-viewer class="scene-environment" src="${escapeHtml(publicAssetPath(item.src))}" camera-controls auto-rotate interaction-prompt="none" shadow-intensity="0.7" exposure="1" alt="${escapeHtml(item.name || key)}"></model-viewer>`;
+  }
+  return `<div class="scene-environment fallback"><span>${previewIcon("environments", key)}</span></div>`;
+}
+
+function sceneAssetPill(label, item, extraClass = "") {
+  const status = assetStatusFor(item.src);
+  return `<div class="scene-asset ${extraClass} ${status}">
+    <div class="scene-asset-visual">${thumbnailMarkup(guessCategoryForItem(item), item, status)}</div>
+    <strong>${escapeHtml(label)}</strong>
+    <small>${escapeHtml(item.name || item.id)}</small>
   </div>`;
 }
 
-function cockpitMarkup(room, mySeat, captainName, engineerName) {
+function voyageActionPanel(room) {
+  const bothConfirmed = room.encounter.sharedConfirmedBy?.includes("captain") && room.encounter.sharedConfirmedBy?.includes("engineer");
+  if (!room.campaign.started || room.encounter.phase === "lobby") {
+    return `<button class="primary-button" data-action="campaign:start">Start Voyage</button>`;
+  }
+  if (room.encounter.phase === "briefing") {
+    return `<button class="primary-button" data-action="encounter:begin">Begin Challenge</button>`;
+  }
+  if (room.encounter.phase === "challenge") {
+    return `<div class="voyage-callout"><strong>Challenge live</strong><span>Open the Puzzle tab and complete both role assignments before the timer ends.</span></div>`;
+  }
   return html`
-    <section class="cockpit toy-gloss" aria-label="toy boat cockpit">
-      <div class="window-row">
-        <div class="cockpit-window"><div class="cloud cloud-a"></div><div class="horizon"></div></div>
-        <div class="cockpit-window"><div class="cloud cloud-b"></div><div class="horizon"></div></div>
-        <div class="cockpit-window"><div class="cloud cloud-c"></div><div class="horizon"></div></div>
-      </div>
-      <div class="upper-console">
-        ${radioMarkup()}
-        ${breakerMarkup(room.switches)}
-        ${instrumentMarkup(room.gauges)}
-        ${gpsMarkup()}
-        ${shifterMarkup()}
-      </div>
-      <div class="lower-console">
-        ${playerStationMarkup("captain", captainName, mySeat === "captain", room.cosmetics?.equipped?.captainSeat, room.cosmetics?.equipped?.captainPlayer)}
-        ${wheelMarkup(room.cosmetics?.equipped?.steeringWheel)}
-        ${playerStationMarkup("engineer", engineerName, mySeat === "engineer", room.cosmetics?.equipped?.engineerSeat, room.cosmetics?.equipped?.engineerPlayer)}
-      </div>
-      ${assetPreviewStripMarkup(room)}
+    <div class="route-panel">
+      <p class="eyebrow">shared route confirmation</p>
+      <div class="route-choice-grid">${room.routeChoices.map((choice) => `<button class="${choice.selected ? "selected" : ""}" data-action="chapter:selectRoute" data-route="${choice.id}">${escapeHtml(choice.title)}</button>`).join("")}</div>
+      <button class="secondary-button" data-action="scene:acknowledge">${bothConfirmed ? "Shared Callout Confirmed" : "Confirm Shared Callout"}</button>
+      <button class="primary-button" data-action="reward:claim" ${bothConfirmed ? "" : "disabled"}>Claim Reward + Continue</button>
+    </div>`;
+}
+
+function renderPuzzleTab(room, seat, captainName, engineerName, task) {
+  return html`
+    <section class="puzzle-layout">
+      <section class="cockpit toy-gloss" aria-label="toy boat cockpit">
+        <div class="window-row">
+          <div class="cockpit-window"><div class="cloud cloud-a"></div><div class="horizon"></div></div>
+          <div class="cockpit-window"><div class="cloud cloud-b"></div><div class="horizon"></div></div>
+          <div class="cockpit-window"><div class="cloud cloud-c"></div><div class="horizon"></div></div>
+        </div>
+        <div class="upper-console">
+          ${radioMarkup()}
+          ${breakerMarkup(room.switches)}
+          ${instrumentMarkup(room.gauges)}
+          ${gpsMarkup()}
+          ${shifterMarkup()}
+        </div>
+        <div class="lower-console">
+          ${playerStationMarkup("captain", captainName, seat === "captain", room.cosmetics?.equipped?.captainSeat, room.cosmetics?.equipped?.captainPlayer)}
+          ${wheelMarkup(room.cosmetics?.equipped?.steeringWheel)}
+          ${playerStationMarkup("engineer", engineerName, seat === "engineer", room.cosmetics?.equipped?.engineerSeat, room.cosmetics?.equipped?.engineerPlayer)}
+        </div>
+        ${assetPreviewStripMarkup(room)}
+      </section>
+
+      <aside class="role-panel toy-gloss puzzle-role-panel">
+        <p class="eyebrow">active encounter</p>
+        <h2>${seat ? ROLE_COPY[seat].title : "Observer Mode"}</h2>
+        <p>${seat ? ROLE_COPY[seat].description : "Claim a seat to receive a live puzzle assignment."}</p>
+        ${directiveMarkup(room, seat)}
+        ${room.treasureHunt?.active ? treasureHuntMarkup(room.treasureHunt, seat) : ""}
+        ${seat && task && room.encounter.phase === "challenge" ? taskMarkup(task, seat) : `<div class="empty-note">${escapeHtml(puzzleStatusCopy(room, seat))}</div>`}
+        ${assetSummaryMarkup(room)}
+      </aside>
     </section>`;
+}
+
+function puzzleStatusCopy(room, seat) {
+  if (!seat) return "Claim Captain or Engineer to receive a role-specific puzzle.";
+  if (room.encounter.phase === "briefing") return "The shared briefing is live. Begin the challenge when both players are ready.";
+  if (room.encounter.phase === "resolution") return "Your role work is complete. Return to Voyage to confirm the next route together.";
+  return "This encounter does not currently need an active local puzzle.";
+}
+
+function renderHangarTab(room) {
+  return `<section class="hangar-tab-shell">${hangarMarkup(room)}</section>`;
+}
+
+function renderManualTab(room) {
+  return html`
+    <section class="manual-layout">
+      <section class="voyage-panel toy-gloss">
+        <p class="eyebrow">owner's manual</p>
+        ${manualMarkup(room.stats.manualPages)}
+      </section>
+      <section class="voyage-panel toy-gloss">
+        <p class="eyebrow">chapter map</p>
+        <div class="chapter-ribbon">${room.chapterSummaries.map((chapter) => `<span class="${room.campaign.completedChapterIds.includes(chapter.id) ? "complete" : room.campaign.currentChapterId === chapter.id ? "active" : room.campaign.unlockedChapters.includes(chapter.id) ? "unlocked" : ""}">${escapeHtml(chapter.title)}</span>`).join("")}</div>
+        <p>Completed chapters: ${room.campaign.completedChapterIds.length}</p>
+      </section>
+      <section class="voyage-panel toy-gloss">
+        <div class="log-head"><h2>Captain's Log</h2></div>
+        ${room.log.map((item) => `<p>${escapeHtml(item.text)}</p>`).join("")}
+      </section>
+    </section>`;
+}
+
+function directiveMarkup(room, seat) {
+  const chapter = room.currentChapter;
+  const captainDone = room.encounter.captainComplete;
+  const engineerDone = room.encounter.engineerComplete;
+  const complete = seat === "captain" ? captainDone : seat === "engineer" ? engineerDone : false;
+  const text = seat ? chapter[`${seat}Directive`] : "Claim a seat to receive your directive.";
+  return html`<div class="directive-card ${complete ? "complete" : ""}">
+    <p class="eyebrow">role directive</p>
+    <strong>${complete ? "Complete — confirm the shared route next." : escapeHtml(text)}</strong>
+  </div>`;
+}
+
+function taskMarkup(task, role) {
+  return html`<div class="task-card" data-task-role="${role}">
+    <p class="eyebrow">active assignment</p>
+    <h3>${escapeHtml(task.title)}</h3>
+    <p><strong>Step:</strong> ${escapeHtml(task.step || task.hint)}</p>
+    <p>${escapeHtml(task.hint)}</p>
+    <div id="taskMount"></div>
+  </div>`;
 }
 
 function radioMarkup() {
@@ -431,10 +681,10 @@ function wheelMarkup(wheelId = "wheel-classic") {
 }
 
 function playerStationMarkup(role, occupied, active, seatId = "seat-navy", playerModelId = "player-default") {
-  const isCaptain = role === "captain";
-  const tablets = isCaptain
-    ? tabletMarkup("RADIO", "radio") + tabletMarkup("WORDS", "word") + tabletMarkup("BUILD", "letters")
-    : tabletMarkup("SORT", "liquid") + tabletMarkup("DOTS", "dots") + tabletMarkup("MATCH", "match");
+  const tablets =
+    role === "captain"
+      ? tabletMarkup("RADIO", "radio") + tabletMarkup("WORDS", "word") + tabletMarkup("RELAY", "signals")
+      : tabletMarkup("SORT", "liquid") + tabletMarkup("DOTS", "dots") + tabletMarkup("MATCH", "match");
   const seat = modelById("seats", seatId);
   const playerModel = modelById("players", playerModelId);
   const playerModelStatus = assetStatusFor(playerModel.src);
@@ -445,7 +695,7 @@ function tabletMarkup(title, visual) {
   const visuals = {
     radio: `<div class="voice-wave"><b></b><b></b><b></b><b></b></div>`,
     word: `<div class="mini-word-grid">${"QWERTYASDFGHZXCV".split("").map((letter) => `<span>${letter}</span>`).join("")}</div>`,
-    letters: `<div class="letter-bank-preview"><span>B</span><span>O</span><span>A</span><span>T</span></div>`,
+    signals: `<div class="match-preview">${["🚩", "⭐", "🔔", "⚓"].map((icon) => `<span>${icon}</span>`).join("")}</div>`,
     liquid: `<div class="tube-preview"><span></span><span></span><span></span><span></span></div>`,
     dots: `<div class="dot-preview"><i></i><i></i><i></i><i></i></div>`,
     match: `<div class="match-preview"><span>⚓</span><span>🔧</span><span>🧭</span><span>💡</span></div>`,
@@ -453,14 +703,17 @@ function tabletMarkup(title, visual) {
   return `<div class="tablet"><div class="tablet-title">${title}</div>${visuals[visual] || ""}</div>`;
 }
 
-function taskMarkup(task, role) {
-  return html`<div class="task-card" data-task-role="${role}">
-    <p class="eyebrow">active assignment</p>
-    <h3>${escapeHtml(task.title)}</h3>
-    <p><strong>Step:</strong> ${escapeHtml(task.step || task.hint)}</p>
-    <p>${escapeHtml(task.hint)}</p>
-    <div id="taskMount"></div>
-  </div>`;
+function assetPreviewStripMarkup(room) {
+  const equipped = room.cosmetics?.equipped || {};
+  const items = [
+    ["captain", modelById("players", equipped.captainPlayer || "player-default")],
+    ["engineer", modelById("players", equipped.engineerPlayer || "player-default")],
+    ["boat", modelById("boats", equipped.boat || "boat-glossy-sloop")],
+    ["wheel", modelById("steeringWheels", equipped.steeringWheel || "wheel-classic")],
+    ["island", modelById("islands", equipped.island || "island-berry-cove")],
+    ["pirate", modelById("pirates", equipped.pirate || "pirate-default")],
+  ];
+  return `<div class="asset-preview-strip">${items.map(([label, item]) => `<div class="asset-pill ${assetStatusFor(item.src)}"><span>${label}</span><strong>${escapeHtml(item.name || item.id)}</strong></div>`).join("")}</div>`;
 }
 
 function manualMarkup(pages) {
@@ -468,41 +721,17 @@ function manualMarkup(pages) {
 }
 
 function statMarkup(name, value, suffix = `${value}%`) {
-  return html`<div class="stat"><div class="stat-label"><span>${name}</span><span>${suffix}</span></div><div class="stat-track"><span style="width:${value}%"></span></div></div>`;
+  return html`<div class="stat"><div class="stat-label"><span>${name}</span><span>${suffix}</span></div><div class="stat-track"><span style="width:${Math.min(100, value)}%"></span></div></div>`;
 }
 
-function revealMarkup(reveal) {
-  return html`<div class="event-backdrop reveal-layer"><section class="event-card manual-reveal toy-gloss">
-    <p class="eyebrow">owner's manual page ${reveal.pageNumber}</p>
-    <h2>${escapeHtml(reveal.title)}</h2>
-    <p>${escapeHtml(reveal.body)}</p>
-    <div class="clue-strip">${escapeHtml(reveal.clue)}</div>
-    ${unlockRevealMarkup(reveal.unlocks || [])}
-    <button class="primary-button" data-action="reveal:clear">Add to Manual</button>
-  </section></div>`;
-}
-
-function eventMarkup(event) {
-  const treasureButtons = event.id === "treasure-hunt"
-    ? `<button class="primary-button" data-action="treasure:start">Launch Treasure Round</button><button class="secondary-button" data-action="event:clear">Not yet</button>`
-    : `<button class="primary-button" data-action="event:clear">Back to cockpit</button>`;
-  return html`<div class="event-backdrop"><section class="event-card toy-gloss">
-    <p class="eyebrow">mode unlocked</p>
-    <h2>${escapeHtml(event.title)}</h2>
-    <p>${escapeHtml(event.subtitle)}</p>
-    <div class="event-visual">${event.icon || "🧭"}</div>
-    <div class="event-actions">${treasureButtons}</div>
-  </section></div>`;
-}
-
-function treasureHuntMarkup(hunt, mySeat) {
+function treasureHuntMarkup(hunt, seat) {
   const guesses = hunt.guesses || [];
-  const isCaptain = mySeat === "captain";
-  const isEngineer = mySeat === "engineer";
+  const isCaptain = seat === "captain";
+  const isEngineer = seat === "engineer";
   const cells = ["A1","B1","C1","D1","E1","A2","B2","C2","D2","E2","A3","B3","C3","D3","E3","A4","B4","C4","D4","E4","A5","B5","C5","D5","E5"];
   const guessMap = new Map(guesses.map((guess) => [guess.coordinate, guess]));
   const status = hunt.solved ? "Treasure found" : hunt.failed ? "Signal lost" : `${hunt.maxAttempts - hunt.attempts} guesses remaining`;
-  const canTap = !hunt.solved && !hunt.failed && (isEngineer || !mySeat);
+  const canTap = !hunt.solved && !hunt.failed && (isEngineer || !seat);
 
   return html`<section class="treasure-panel">
     <div class="treasure-head">
@@ -521,79 +750,15 @@ function treasureHuntMarkup(hunt, mySeat) {
         <div class="treasure-grid">${cells.map((cell) => {
           const guess = guessMap.get(cell);
           const cls = guess ? (guess.correct ? "correct" : guess.hazard ? "hazard" : "miss") : "";
-          const disabled = canTap ? "" : "disabled";
-          return `<button class="${cls}" data-treasure-coordinate="${cell}" ${disabled}>${cell}</button>`;
+          return `<button class="${cls}" data-treasure-coordinate="${cell}" ${canTap ? "" : "disabled"}>${cell}</button>`;
         }).join("")}</div>
         <p class="grid-help">${isEngineer ? "Tap the coordinate your partner calls out." : "Engineer taps the coordinate. Solo testing is allowed before a second player joins."}</p>
       </div>
     </div>
-    <div class="guess-log">
-      ${guesses.length ? guesses.slice(-4).map((guess) => `<span class="${guess.correct ? "correct" : guess.hazard ? "hazard" : "miss"}">${escapeHtml(guess.player)}: ${guess.coordinate}</span>`).join("") : `<span>No guesses yet.</span>`}
-    </div>
+    <div class="guess-log">${guesses.length ? guesses.slice(-4).map((guess) => `<span class="${guess.correct ? "correct" : guess.hazard ? "hazard" : "miss"}">${escapeHtml(guess.player)}: ${guess.coordinate}</span>`).join("") : `<span>No guesses yet.</span>`}</div>
     ${hunt.solved ? `<div class="treasure-result success"><strong>Cache opened.</strong><p>${escapeHtml(hunt.reward)}</p><button class="primary-button" data-action="treasure:clear">Collect Treasure</button></div>` : ""}
     ${hunt.failed ? `<div class="treasure-result"><strong>Signal lost.</strong><p>Relaunch the map to try another clue.</p><button class="primary-button" data-action="treasure:start">Relaunch Hunt</button><button class="secondary-button" data-action="treasure:clear">Close</button></div>` : ""}
   </section>`;
-}
-
-
-function unlockRevealMarkup(unlocks = []) {
-  if (!unlocks.length) return "";
-  return `<div class="unlock-reveal"><p class="eyebrow">new cosmetic unlock</p>${unlocks.map((item) => `<span>${escapeHtml(item.name)}</span>`).join("")}</div>`;
-}
-
-function assetPreviewStripMarkup(room) {
-  const equipped = room.cosmetics?.equipped || {};
-  const items = [
-    ["captain", modelById("players", equipped.captainPlayer || "player-default")],
-    ["engineer", modelById("players", equipped.engineerPlayer || "player-default")],
-    ["boat", modelById("boats", equipped.boat || "boat-glossy-sloop")],
-    ["wheel", modelById("steeringWheels", equipped.steeringWheel || "wheel-classic")],
-    ["island", modelById("islands", equipped.island || "island-berry-cove")],
-    ["pirate", modelById("pirates", equipped.pirate || "pirate-default")],
-  ];
-  return `<div class="asset-preview-strip">${items.map(([label, item]) => `<div class="asset-pill ${assetStatusFor(item.src)}"><span>${label}</span><strong>${escapeHtml(item.name || item.id)}</strong></div>`).join("")}</div>`;
-}
-
-function assetStatusFor(src) {
-  if (!src) return "fallback";
-  const key = normalizeAssetPath(src);
-  if (!(key in state.assetStatus)) return "checking";
-  return state.assetStatus[key] ? "ready" : "missing";
-}
-
-function normalizeAssetPath(src) {
-  return String(src || "").replace(/^\/+/, "");
-}
-
-function publicAssetPath(src) {
-  if (!src) return "";
-  const clean = normalizeAssetPath(src);
-  return `/${clean}`;
-}
-
-function collectAssetPaths() {
-  const modelPaths = Object.values(state.assetManifest?.models || {})
-    .flat()
-    .flatMap((item) => [item.src, item.thumbnail])
-    .filter(Boolean);
-  const guiPaths = Object.values(state.assetManifest?.gui || {}).filter(Boolean);
-  const minigamePaths = Object.values(state.assetManifest?.minigames || {}).filter(Boolean);
-  return [...new Set([...modelPaths, ...guiPaths, ...minigamePaths].map(normalizeAssetPath))];
-}
-
-async function scanAssetStatus() {
-  if (state.assetScanStarted) return;
-  state.assetScanStarted = true;
-  const paths = collectAssetPaths();
-  await Promise.all(paths.map(async (src) => {
-    try {
-      const response = await fetch(`/${src}`, { method: "HEAD", cache: "no-store" });
-      state.assetStatus[src] = response.ok;
-    } catch {
-      state.assetStatus[src] = false;
-    }
-  }));
-  render();
 }
 
 function assetSummaryMarkup(room) {
@@ -608,9 +773,9 @@ function assetSummaryMarkup(room) {
   ];
   return html`<section class="asset-summary">
     <div class="asset-locker-head">
-      <p class="eyebrow">v0.5 loadout</p>
-      <h3>3D Asset Loadout</h3>
-      <p>Open the hangar below the cockpit to preview, rotate, test local files, and equip real models.</p>
+      <p class="eyebrow">synced loadout</p>
+      <h3>Voyage Asset Loadout</h3>
+      <p>These equipped models drive the voyage scene, cockpit cosmetics, and chapter diorama.</p>
     </div>
     <div class="loadout-grid">${loadout.map(([label, item]) => loadoutPillMarkup(label, item)).join("")}</div>
   </section>`;
@@ -621,7 +786,7 @@ function loadoutPillMarkup(label, item) {
   return `<div class="loadout-pill ${status}"><span>${escapeHtml(label)}</span><strong>${escapeHtml(item.name || item.id)}</strong><small>${statusLabel(status)}</small></div>`;
 }
 
-function hangarMarkup(room, mySeat) {
+function hangarMarkup(room) {
   const category = HANGAR_CATEGORIES.find((item) => item.key === state.ui.hangarCategory) || HANGAR_CATEGORIES[0];
   const items = modelItems(category.key);
   const selectedId = state.ui.hangarSelection[category.key] || items[0]?.id || "";
@@ -636,31 +801,26 @@ function hangarMarkup(room, mySeat) {
   return html`<section class="hangar-section toy-gloss" id="assetHangar">
     <div class="hangar-head">
       <div>
-        <p class="eyebrow">v0.5 3D hangar</p>
+        <p class="eyebrow">asset hangar</p>
         <h2>Model Gallery + Equipment Bay</h2>
-        <p>Preview your real GLB/GLTF assets, verify file paths, equip unlocked cosmetics, and test a local model before copying it into the project.</p>
+        <p>Preview real GLB/GLTF assets, verify scene roles, and equip the loadout that powers the voyage diorama.</p>
       </div>
       <label class="local-preview-button">
         <input type="file" id="localModelPreview" accept=".glb,.gltf,model/gltf-binary,model/gltf+json" />
         Preview local GLB/GLTF
       </label>
     </div>
-
     <div class="hangar-tabs">
       ${HANGAR_CATEGORIES.map((item) => `<button class="hangar-tab ${item.key === category.key ? "active" : ""}" data-hangar-tab="${item.key}"><span>${item.icon}</span>${item.label}</button>`).join("")}
     </div>
-
     <div class="hangar-grid">
       <div class="hangar-browser">
         <div class="hangar-browser-head">
           <h3>${category.icon} ${category.label}</h3>
           <code>${escapeHtml(category.folder)}</code>
         </div>
-        <div class="asset-card-grid">
-          ${items.map((item) => hangarCardMarkup(category.key, item, selected.id, unlockedIds, cosmetics.equipped)).join("")}
-        </div>
+        <div class="asset-card-grid">${items.map((item) => hangarCardMarkup(category.key, item, selected.id, unlockedIds, cosmetics.equipped)).join("")}</div>
       </div>
-
       <div class="hangar-preview-card">
         ${largePreviewMarkup(category.key, selected, status)}
         <div class="asset-detail-panel">
@@ -670,7 +830,7 @@ function hangarMarkup(room, mySeat) {
           <div class="asset-meta-grid">
             <span><strong>ID</strong><code>${escapeHtml(selected.id)}</code></span>
             <span><strong>Status</strong><code>${statusLabel(status)}</code></span>
-            <span><strong>Slot</strong><code>${escapeHtml(selected.slot || category.key)}</code></span>
+            <span><strong>Scene role</strong><code>${escapeHtml(selected.sceneRole || selected.slot || category.key)}</code></span>
             <span><strong>Unlock</strong><code>${isUnlocked ? "available" : `manual page ${selected.unlockAtManualPages ?? "?"}`}</code></span>
           </div>
           ${selected.src ? `<div class="path-row"><code>${escapeHtml(selected.src)}</code><button data-copy-path="${escapeHtml(selected.src)}">Copy path</button></div>` : `<div class="path-row"><code>CSS fallback / no model file required</code></div>`}
@@ -678,9 +838,8 @@ function hangarMarkup(room, mySeat) {
         </div>
       </div>
     </div>
-
     <details class="asset-intake-panel">
-      <summary>Asset readiness + real GUI/minigame asset map</summary>
+      <summary>Asset readiness + GUI/minigame asset map</summary>
       <div class="readiness-grid">${readinessMarkup()}</div>
       <h4>GUI assets</h4>
       <div class="gui-asset-row">${Object.entries(gui).map(([name, src]) => guiAssetMarkup(name, src)).join("")}</div>
@@ -727,8 +886,8 @@ function modelViewerMarkup(src, label, size = "thumb", alreadyPublic = false) {
 
 function assetDescription(category, item, status) {
   const folder = HANGAR_CATEGORIES.find((entry) => entry.key === category)?.folder || "assets/models";
-  if (!item.src) return `This is a built-in CSS fallback. Add a real model to the manifest to replace it later.`;
-  if (status === "ready") return `The model file is available and ready for the hosted game. Use the equip buttons to assign it to the live room.`;
+  if (!item.src) return "This is a built-in CSS fallback. Add a real model to the manifest to replace it later.";
+  if (status === "ready") return `The model file is available and ready for the hosted game. This asset can now appear in the voyage scene and equipped loadout.`;
   if (status === "checking") return `Checking whether the file exists in ${folder}.`;
   return `Expected file is missing. Place the model at ${item.src}, then refresh the page.`;
 }
@@ -767,15 +926,6 @@ function equippedStateLabel(category, id, equipped = {}) {
   return "";
 }
 
-function statusLabel(status) {
-  return { ready: "file ready", missing: "missing file", checking: "checking", fallback: "fallback" }[status] || status;
-}
-
-function guiAssetMarkup(name, src) {
-  const status = assetStatusFor(src);
-  return `<span class="${status}">${status === "ready" ? `<img src="/${normalizeAssetPath(src)}" alt="${escapeHtml(name)}" />` : `<b>${previewIcon("gui", name)}</b>`}${escapeHtml(name)}<small>${statusLabel(status)}</small></span>`;
-}
-
 function readinessMarkup() {
   return HANGAR_CATEGORIES.map((entry) => {
     const items = modelItems(entry.key);
@@ -784,6 +934,11 @@ function readinessMarkup() {
     const missing = items.filter((item) => item.src && assetStatusFor(item.src) === "missing").length;
     return `<div><strong>${entry.icon} ${entry.label}</strong><span>${ready}/${withFiles} model files ready${missing ? ` · ${missing} missing` : ""}</span><code>${entry.folder}</code></div>`;
   }).join("");
+}
+
+function guiAssetMarkup(name, src) {
+  const status = assetStatusFor(src);
+  return `<span class="${status}">${status === "ready" ? `<img src="/${normalizeAssetPath(src)}" alt="${escapeHtml(name)}" />` : `<b>${previewIcon("gui", name)}</b>`}${escapeHtml(name)}<small>${statusLabel(status)}</small></span>`;
 }
 
 function previewIcon(category, id) {
@@ -799,6 +954,12 @@ function previewIcon(category, id) {
   return "⬡";
 }
 
+function guessCategoryForItem(item) {
+  const groups = Object.entries(state.assetManifest.models || {});
+  const found = groups.find(([, items]) => items.some((candidate) => candidate.id === item.id));
+  return found?.[0] || "players";
+}
+
 function handleLocalPreview(file) {
   if (!file) return;
   if (state.ui.localPreview?.url) URL.revokeObjectURL(state.ui.localPreview.url);
@@ -808,21 +969,15 @@ function handleLocalPreview(file) {
 }
 
 function bindGameEvents() {
-  document.querySelectorAll("[data-action='mission:start']").forEach((button) => button.addEventListener("click", () => action("mission:start")));
-  document.querySelectorAll("[data-action='seat:claim']").forEach((button) => button.addEventListener("click", () => action("seat:claim", { seat: button.dataset.seat })));
-  document.querySelectorAll("[data-action='seat:swap']").forEach((button) => button.addEventListener("click", () => action("seat:swap")));
-  document.querySelectorAll("[data-action='event:clear']").forEach((button) => button.addEventListener("click", () => action("event:clear")));
-  document.querySelectorAll("[data-action='reveal:clear']").forEach((button) => button.addEventListener("click", () => action("reveal:clear")));
-  document.querySelectorAll("[data-action='treasure:start']").forEach((button) => button.addEventListener("click", () => action("treasure:start")));
-  document.querySelectorAll("[data-action='treasure:clear']").forEach((button) => button.addEventListener("click", () => action("treasure:clear")));
-  document.querySelectorAll("[data-treasure-coordinate]").forEach((button) => button.addEventListener("click", () => action("treasure:guess", { coordinate: button.dataset.treasureCoordinate })));
   document.querySelectorAll("[data-local='leave']").forEach((button) => button.addEventListener("click", leaveRoom));
+  document.querySelectorAll("[data-local='tab']").forEach((button) => button.addEventListener("click", () => setActiveTab(button.dataset.tab)));
+  document.querySelectorAll("[data-local='share-room']").forEach((button) => button.addEventListener("click", shareRoom));
+  document.querySelectorAll("[data-action]").forEach((button) => button.addEventListener("click", () => handleActionButton(button)));
   document.querySelectorAll("[data-switch]").forEach((button) => button.addEventListener("click", () => action("switch:toggle", { id: button.dataset.switch })));
-  document.querySelectorAll("[data-event]").forEach((button) => button.addEventListener("click", () => action("event:trigger", { id: button.dataset.event })));
   document.querySelectorAll("[data-equip-category]").forEach((button) => button.addEventListener("click", () => action("cosmetic:equip", { category: button.dataset.equipCategory, id: button.dataset.equipId, target: button.dataset.equipTarget })));
   document.querySelectorAll("[data-hangar-tab]").forEach((button) => button.addEventListener("click", () => {
     state.ui.hangarCategory = button.dataset.hangarTab;
-    localStorage.setItem("tcV05HangarCategory", state.ui.hangarCategory);
+    localStorage.setItem("tcV06HangarCategory", state.ui.hangarCategory);
     state.ui.localPreview = null;
     render();
   }));
@@ -840,8 +995,34 @@ function bindGameEvents() {
       button.textContent = "Copy failed";
     }
   }));
+  document.querySelectorAll("[data-treasure-coordinate]").forEach((button) => button.addEventListener("click", () => action("treasure:guess", { coordinate: button.dataset.treasureCoordinate })));
   const fileInput = document.querySelector("#localModelPreview");
   if (fileInput) fileInput.addEventListener("change", (event) => handleLocalPreview(event.target.files?.[0]));
+}
+
+function handleActionButton(button) {
+  const type = button.dataset.action;
+  if (type === "chapter:selectRoute") return action(type, { chapterId: button.dataset.route });
+  return action(type);
+}
+
+async function shareRoom() {
+  if (!state.room) return;
+  const url = roomJoinUrl(state.room);
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: "Treasure Crew Room", text: `Join my Treasure Crew room: ${state.room.code}`, url });
+      return;
+    } catch {}
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    state.error = "Join link copied to clipboard.";
+    render();
+  } catch {
+    state.error = "Could not share the room link.";
+    render();
+  }
 }
 
 function completeTask(role, note) {
@@ -856,6 +1037,11 @@ function mountTask(task, role) {
   if (task.type === "liquid-sort") return mountLiquidSort(mount, role);
   if (task.type === "connect-dots") return mountConnectDots(mount, role);
   if (task.type === "matching") return mountMatching(mount, role);
+  if (task.type === "signal-relay") return mountSignalRelay(mount, task, role);
+  if (task.type === "code-select") return mountCodeSelect(mount, task, role);
+  if (task.type === "breaker-balance") return mountBreakerBalance(mount, task, role);
+  if (task.type === "cargo-sort") return mountCargoSort(mount, role);
+  if (task.type === "sequence-repeat") return mountSequenceRepeat(mount, task, role);
 }
 
 function mountWordSearch(mount, task, role) {
@@ -873,7 +1059,7 @@ function mountWordSearch(mount, task, role) {
       else selected = [];
       if (selected.map((cell) => grid[cell.r][cell.c]).join("") === task.target) {
         draw();
-        setTimeout(() => completeTask(role, `decoded ${task.target}`), 350);
+        setTimeout(() => completeTask(role, `decoded ${task.target}`), 250);
       } else draw();
     }));
   };
@@ -890,7 +1076,7 @@ function mountLetterBank(mount, task, role) {
       used.push({ letter: button.dataset.letter, index: Number(button.dataset.index) });
       if (used.map((item) => item.letter).join("") === task.target) {
         draw();
-        setTimeout(() => completeTask(role, `built ${task.target}`), 350);
+        setTimeout(() => completeTask(role, `built ${task.target}`), 250);
       } else draw();
     }));
     mount.querySelector("[data-reset]").addEventListener("click", () => { used = []; draw(); });
@@ -919,7 +1105,7 @@ function mountLiquidSort(mount, role) {
       }
       if (isSolved()) {
         draw();
-        setTimeout(() => completeTask(role, "fluids balanced"), 500);
+        setTimeout(() => completeTask(role, "fluids balanced"), 300);
       } else draw();
     }));
     mount.querySelector("[data-reset]").addEventListener("click", () => { tubes = LIQUID_START.map((tube) => [...tube]); selected = null; draw(); });
@@ -938,7 +1124,7 @@ function mountConnectDots(mount, role) {
       nextDot = dot === nextDot ? nextDot + 1 : 1;
       if (nextDot > dots.length) {
         draw();
-        setTimeout(() => completeTask(role, "circuit path restored"), 450);
+        setTimeout(() => completeTask(role, "circuit path restored"), 250);
       } else draw();
     }));
   };
@@ -966,13 +1152,96 @@ function mountMatching(mount, role) {
           open = [];
           if (matched.length === cards.length) {
             draw();
-            setTimeout(() => completeTask(role, "parts matched"), 400);
+            setTimeout(() => completeTask(role, "parts matched"), 250);
           } else draw();
-        }, 500);
+        }, 400);
       }
     }));
   };
   draw();
+}
+
+function mountSignalRelay(mount, task, role) {
+  let progress = 0;
+  const draw = () => {
+    mount.innerHTML = html`<div class="target-word">Repeat: ${task.targetSignals.map((item) => SIGNAL_ICONS[item]).join(" ")}</div><div class="signal-grid">${SIGNAL_SET.map((signal) => `<button data-signal="${signal}" class="${task.targetSignals[progress] === signal ? "suggested" : ""}">${SIGNAL_ICONS[signal]}<span>${signal}</span></button>`).join("")}</div><div class="answer-strip">${progress ? `Correct: ${progress}/${task.targetSignals.length}` : "tap the relay signals in order"}</div>`;
+    mount.querySelectorAll("[data-signal]").forEach((button) => button.addEventListener("click", () => {
+      const signal = button.dataset.signal;
+      if (signal === task.targetSignals[progress]) progress += 1;
+      else progress = 0;
+      if (progress >= task.targetSignals.length) {
+        draw();
+        setTimeout(() => completeTask(role, "relayed the signal order"), 250);
+      } else draw();
+    }));
+  };
+  draw();
+}
+
+function mountCodeSelect(mount, task, role) {
+  mount.innerHTML = html`<div class="target-word">${escapeHtml(task.prompt)}</div><div class="choice-grid">${task.options.map((option) => `<button data-choice="${escapeHtml(option)}">${escapeHtml(option)}</button>`).join("")}</div>`;
+  mount.querySelectorAll("[data-choice]").forEach((button) => button.addEventListener("click", () => {
+    if (button.dataset.choice === task.answer) {
+      button.classList.add("correct");
+      setTimeout(() => completeTask(role, `selected ${task.answer}`), 250);
+    } else {
+      button.classList.add("wrong");
+    }
+  }));
+}
+
+function mountBreakerBalance(mount, task, role) {
+  const active = new Set();
+  const target = new Set(task.targetSwitches);
+  const allSwitches = ["nav", "fuel", "gps", "defense", "pump", "radio"];
+  const solved = () => allSwitches.every((id) => active.has(id) === target.has(id));
+  const draw = () => {
+    mount.innerHTML = html`<div class="target-word">Activate: ${task.targetSwitches.join(", ")}</div><div class="breaker-balance-grid">${allSwitches.map((item) => `<button data-breaker="${item}" class="${active.has(item) ? "selected" : ""}">${item}</button>`).join("")}</div>`;
+    mount.querySelectorAll("[data-breaker]").forEach((button) => button.addEventListener("click", () => {
+      const id = button.dataset.breaker;
+      if (active.has(id)) active.delete(id);
+      else active.add(id);
+      if (solved()) {
+        draw();
+        setTimeout(() => completeTask(role, "balanced the breakers"), 250);
+      } else draw();
+    }));
+  };
+  draw();
+}
+
+function mountCargoSort(mount, role) {
+  const assignments = {};
+  const groups = ["fruit", "tools", "treasure"];
+  const solved = () => CARGO_ITEMS.every((item) => assignments[item.id] === item.group);
+  const draw = () => {
+    mount.innerHTML = html`<div class="cargo-grid">${CARGO_ITEMS.map((item) => `<div class="cargo-card"><strong>${item.icon} ${escapeHtml(item.label)}</strong><div class="cargo-choices">${groups.map((group) => `<button data-cargo="${item.id}" data-group="${group}" class="${assignments[item.id] === group ? "selected" : ""}">${group}</button>`).join("")}</div></div>`).join("")}</div>`;
+    mount.querySelectorAll("[data-cargo]").forEach((button) => button.addEventListener("click", () => {
+      assignments[button.dataset.cargo] = button.dataset.group;
+      if (solved()) {
+        draw();
+        setTimeout(() => completeTask(role, "sorted the cargo hold"), 250);
+      } else draw();
+    }));
+  };
+  draw();
+}
+
+function mountSequenceRepeat(mount, task, role) {
+  let progress = [];
+  mount.innerHTML = html`<div class="target-word">Memorize: ${task.sequence.map((item) => PULSE_COLORS[item]).join(" ")}</div><div class="signal-grid">${Object.entries(PULSE_COLORS).map(([color, icon]) => `<button data-pulse="${color}">${icon}<span>${color}</span></button>`).join("")}</div><button class="secondary-button" data-reset>Reset attempt</button>`;
+  const update = () => {
+    mount.querySelectorAll("[data-pulse]").forEach((button) => button.addEventListener("click", () => {
+      progress.push(button.dataset.pulse);
+      if (progress.join("|") === task.sequence.join("|")) {
+        setTimeout(() => completeTask(role, "repeated the power pulse"), 250);
+      } else if (progress.length >= task.sequence.length && progress.join("|") !== task.sequence.join("|")) {
+        progress = [];
+      }
+    }));
+    mount.querySelector("[data-reset]").addEventListener("click", () => { progress = []; });
+  };
+  update();
 }
 
 function shuffle(items) {
@@ -984,5 +1253,13 @@ function shuffle(items) {
   return next;
 }
 
+function timeRemaining(targetTime) {
+  const diff = Math.max(0, targetTime - Date.now());
+  const minutes = Math.floor(diff / 60000);
+  const seconds = Math.floor((diff % 60000) / 1000);
+  return `${minutes}:${String(seconds).padStart(2, "0")} left`;
+}
+
+if (state.code && state.playerId) connectStream(state.code);
 render();
 loadAssetManifest();

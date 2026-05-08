@@ -11,70 +11,115 @@ const PORT = process.env.PORT || 3001;
 
 const rooms = new Map();
 
-const MISSION_STAGES = [
+const CHAPTERS = [
   {
-    id: "emergency-drift",
-    title: "Emergency Drift",
-    brief: "The boat is drifting. Restore navigation and engine power before the route slips away.",
-    captain: "Decode one radio/navigation task so the crew knows where to steer.",
-    engineer: "Complete one repair task to stabilize power and hull systems.",
-    rewardTitle: "Emergency Startup",
-    rewardBody: "When the cockpit goes strange, trust the red lights first. Reset warnings, then compare the blank gauges only after systems stabilize.",
-    clue: "First clue: red lights point toward the next safe route.",
+    id: "harbor-launch",
+    title: "Harbor Launch",
+    theme: "cozy-launch",
+    sceneState: "idle-cruise",
+    briefing:
+      "Warm up the crew. Captain restores the launch checklist while Engineer settles the cockpit systems.",
+    captainDirective: "Recover the launch phrase and guide the first route callout.",
+    engineerDirective: "Calm the cockpit by restoring order to the opening maintenance puzzle.",
+    resolutionTitle: "Harbor Crew Harmony",
+    resolutionBody:
+      "The launch went smoothly. The crew trusts the shared routine: clue, response, confirm, commit.",
+    rewardTreasure: 10,
+    routes: ["treasure-waters", "storm-repair"],
+    routeLabel: "Choose the first true voyage lane together.",
+    timerMs: 150000,
+    difficulty: 1,
+    challengeType: "launch-sequence",
   },
   {
-    id: "manual-builder",
-    title: "Build the Owner's Manual",
-    brief: "The manual is assembling itself page by page. Finish both stations to reveal the next operating rule.",
-    captain: "Solve a word task to recover a missing manual heading.",
-    engineer: "Finish a maintenance task to unlock the matching diagram.",
-    rewardTitle: "Navigation Glossary",
-    rewardBody: "Radio words become manual headings. Maintenance icons become diagrams. Together, they tell the crew what the boat can do next.",
-    clue: "Treasure clue: look for the marked grid square when the map appears.",
-    event: "treasure-hunt",
+    id: "treasure-waters",
+    title: "Treasure Waters",
+    theme: "treasure-map",
+    sceneState: "treasure-sighting",
+    briefing:
+      "A glittering island rises on the horizon. The Captain reads the clue while the Engineer works the grid.",
+    captainDirective: "Decode the map phrase and call out the safe treasure path.",
+    engineerDirective: "Keep the route tools clear and act on the Captain's clue.",
+    resolutionTitle: "Treasure Signal Captured",
+    resolutionBody:
+      "The crew turns shared clues into action. Treasure is earned by careful listening, not by guessing fast.",
+    rewardTreasure: 22,
+    routes: ["pirate-intercept", "storm-repair"],
+    routeLabel: "Commit to a richer route or take the safer weather lane.",
+    timerMs: 165000,
+    difficulty: 2,
+    challengeType: "treasure-grid",
   },
   {
-    id: "treasure-signal",
-    title: "Treasure Signal",
-    brief: "A treasure frequency is coming through. Keep talking: one player reads the clue, the other confirms the cockpit grid.",
-    captain: "Complete the next communications task to lock the treasure phrase.",
-    engineer: "Complete the next repair task to keep the signal from fading.",
-    rewardTitle: "Treasure Protocol",
-    rewardBody: "The map reader should speak slowly. The cockpit reader confirms row, column, and warning icons before the crew commits.",
-    clue: "Demo coordinate: X marks B4. Avoid the reef at C3.",
-    event: "treasure-hunt",
+    id: "pirate-intercept",
+    title: "Pirate Intercept",
+    theme: "pirate-warning",
+    sceneState: "pirate-approach",
+    briefing:
+      "A toy pirate crew drifts into view. Stay playful but sharp: Captain relays warnings while Engineer stabilizes defenses.",
+    captainDirective: "Relay the defense signal before pirate pressure spikes.",
+    engineerDirective: "Sort and route the defense systems while listening for the pirate callout.",
+    resolutionTitle: "Playful Defense Drill",
+    resolutionBody:
+      "The pirate chapter proves the loop: one player reads intent, the other executes, then both confirm the next move.",
+    rewardTreasure: 18,
+    routes: ["storm-repair", "harbor-launch"],
+    routeLabel: "Patch up now or loop back for a calmer supply run.",
+    timerMs: 170000,
+    difficulty: 3,
+    challengeType: "pirate-defense",
   },
   {
-    id: "pirate-warning",
-    title: "Pirate Warning",
-    brief: "Pirate flags are on the horizon. Finish both stations to unlock the first defense drill.",
-    captain: "Call out the radio warning phrase before the pirate timer fills.",
-    engineer: "Complete a fast maintenance task to arm the playful defense system.",
-    rewardTitle: "Pirate Defense Basics",
-    rewardBody: "Defense rounds should stay silly and quick: match symbols, sort cannon colors, repair sails, and call out radio warnings.",
-    clue: "Next build: timed pirate mini-games with shared callouts.",
-    event: "pirate-approach",
+    id: "storm-repair",
+    title: "Storm Repair",
+    theme: "storm-emergency",
+    sceneState: "storm-emergency",
+    briefing:
+      "The sea turns rough. Captain keeps the route readable while Engineer reorders a cockpit under pressure.",
+    captainDirective: "Recover the warning code and make the crew's route choice readable again.",
+    engineerDirective: "Repair fast, then confirm the safe lane with the Captain.",
+    resolutionTitle: "Storm Confidence",
+    resolutionBody:
+      "A soft failure is still a lesson. The boat bends, the crew adapts, and the voyage continues.",
+    rewardTreasure: 14,
+    routes: ["treasure-waters", "pirate-intercept"],
+    routeLabel: "Take the recovered route and continue the voyage.",
+    timerMs: 150000,
+    difficulty: 2,
+    challengeType: "storm-recovery",
   },
 ];
 
-const EVENTS = {
-  "treasure-hunt": {
-    id: "treasure-hunt",
-    title: "Treasure Hunt Unlocked",
-    subtitle: "Launch a true co-op map round: Captain reads the clue, Engineer taps the cockpit GPS coordinate.",
-    icon: "🗺️",
+const CHAPTER_LOOKUP = Object.fromEntries(CHAPTERS.map((chapter) => [chapter.id, chapter]));
+
+const VOYAGE_SCENES = {
+  "idle-cruise": {
+    id: "idle-cruise",
+    title: "Idle Cruise",
+    subtitle: "The crew glides into open water and checks every station before committing to the route.",
+    mood: "clear-sky",
+    callout: "Start with communication, not speed.",
+  },
+  "treasure-sighting": {
+    id: "treasure-sighting",
+    title: "Treasure Sighting",
+    subtitle: "The island and its treasure clue appear together. One player reads; one player confirms.",
+    mood: "gold-haze",
+    callout: "Say the clue slowly and verify the grid before acting.",
   },
   "pirate-approach": {
     id: "pirate-approach",
-    title: "Pirates on the Horizon",
-    subtitle: "Defend the boat with fast matching, sorting, repair, and radio callouts.",
-    icon: "☠️",
+    title: "Pirate Approach",
+    subtitle: "Pirate toys drift into range. Keep the tone playful and the callouts exact.",
+    mood: "warning-red",
+    callout: "Defense works best when both roles repeat the plan.",
   },
-  "fog-bank": {
-    id: "fog-bank",
-    title: "Fog Bank Drift",
-    subtitle: "Use the radio and GPS grid together before the route disappears.",
-    icon: "🧭",
+  "storm-emergency": {
+    id: "storm-emergency",
+    title: "Storm Emergency",
+    subtitle: "The cockpit shakes. Repair first, confirm second, and keep the route readable.",
+    mood: "storm-blue",
+    callout: "Soft failure is okay. Recover, confirm, continue.",
   },
 };
 
@@ -84,30 +129,29 @@ const TREASURE_ROUNDS = [
     title: "Berry Cove Cache",
     target: "B4",
     hazards: ["C3", "D2"],
-    clue: "From the palm tree, sail two squares east, then one square south. Stop before the reef marker. Call out B4 when you are sure.",
+    clue: "From the palm tree, sail two squares east, then one square south. Stop before the reef marker.",
     mapNote: "Palm tree starts at A3. Reef warning: C3. Whirlpool warning: D2.",
-    reward: "A small berry-stamped key and 18 gold coins spill into the ship inventory.",
+    reward: "A berry-stamped key and 18 gold coins slide into the toy treasure locker.",
   },
   {
     id: "pearl-bank",
     title: "Pearl Bank Marker",
     target: "D2",
     hazards: ["B2", "E4"],
-    clue: "Find the pearl bank on row 2. Count four columns from the left edge. Do not choose the shark shadow at B2.",
+    clue: "Find the pearl bank on row 2. Count four columns from the left edge and confirm the shark shadow first.",
     mapNote: "Pearl bank crosses row 2. Shark shadow at B2. Storm pocket at E4.",
-    reward: "A pearl compass lens unlocks for the owner’s manual treasure chapter.",
+    reward: "A pearl compass lens unlocks another owner's manual chapter.",
   },
   {
     id: "skull-sandbar",
     title: "Skull Sandbar Detour",
     target: "C5",
     hazards: ["C4", "A5"],
-    clue: "Follow the bottom current to row 5. The safe X is centered on the map. Avoid the skull sandbar directly above it.",
+    clue: "Follow the bottom current to row 5. The safe X is centered on the map, just below the skull sandbar.",
     mapNote: "Safe row: 5. Center column: C. Skull sandbar at C4. Jagged rocks at A5.",
-    reward: "A glossy ruby anchor charm is added to the treasure shelf.",
+    reward: "A glossy ruby anchor charm is added to the boat shelf.",
   },
 ];
-
 
 const COSMETIC_UNLOCKS = [
   { manualPage: 0, category: "steeringWheels", id: "wheel-classic", name: "Classic Toy Wheel" },
@@ -123,6 +167,162 @@ const COSMETIC_UNLOCKS = [
   { manualPage: 4, category: "seats", id: "seat-pirate", name: "Pirate Red Chair" },
   { manualPage: 5, category: "boats", id: "boat-pirate-brown", name: "Brown Pirate Ship" },
   { manualPage: 6, category: "islands", id: "island-berry-cove", name: "Berry Cove Island" },
+];
+
+const SWITCHES = [
+  "nav",
+  "radio",
+  "pump",
+  "fuel",
+  "lights",
+  "gps",
+  "manual",
+  "defense",
+  "aux-a",
+  "aux-b",
+  "aux-c",
+  "aux-d",
+].map((id, index) => ({ id, name: "", on: index % 3 !== 0, alert: index < 8 }));
+
+const CAPTAIN_TASKS = [
+  {
+    id: "radio-check",
+    role: "captain",
+    type: "word-search",
+    title: "Decode Radio Call",
+    target: "RADIO",
+    hint: "Tap R-A-D-I-O in order, then call the word out loud.",
+    step: "Restore the comms word before the route fades.",
+  },
+  {
+    id: "signal-flag",
+    role: "captain",
+    type: "word-search",
+    title: "Signal Flag Scan",
+    target: "ANCHOR",
+    hint: "Trace A-N-C-H-O-R to recover the safe harbor signal.",
+    step: "Read the target word, then tap each letter in order.",
+  },
+  {
+    id: "plot-course",
+    role: "captain",
+    type: "letter-bank",
+    title: "Build Navigation Term",
+    target: "COMPASS",
+    letters: "ASCOMPS",
+    hint: "Use all letters to build the missing manual heading.",
+    step: "Assemble the heading and confirm it with your partner.",
+  },
+  {
+    id: "storm-phrase",
+    role: "captain",
+    type: "letter-bank",
+    title: "Repair Radio Phrase",
+    target: "MAYDAY",
+    letters: "YDAMAY",
+    hint: "Assemble the emergency radio call.",
+    step: "Build the phrase and tell the engineer the warning is clear.",
+  },
+  {
+    id: "treasure-term",
+    role: "captain",
+    type: "letter-bank",
+    title: "Treasure Clue Phrase",
+    target: "BERRY",
+    letters: "RYEBR",
+    hint: "Build the hidden clue word and say it slowly.",
+    step: "Assemble the clue word to add it to the owner's manual.",
+  },
+  {
+    id: "semaphore-relay",
+    role: "captain",
+    type: "signal-relay",
+    title: "Semaphore Relay",
+    targetSignals: ["wave", "flag", "bell", "star"],
+    hint: "Repeat the signal order exactly so your partner can follow the lane.",
+    step: "Read the signal order and confirm each icon in sequence.",
+  },
+  {
+    id: "pirate-warning",
+    role: "captain",
+    type: "code-select",
+    title: "Pirate Warning Phrase",
+    prompt: "Which playful warning keeps the crew calm and precise?",
+    options: ["RED SAIL", "HOLD FAST", "BONE BELL", "WAVE BRACE"],
+    answer: "HOLD FAST",
+    hint: "Pick the phrase that sounds like a calm defense callout.",
+    step: "Choose the best pirate warning and speak it to the crew.",
+  },
+];
+
+const ENGINEER_TASKS = [
+  {
+    id: "coolant-sort",
+    role: "engineer",
+    type: "liquid-sort",
+    title: "Balance Coolant Tubes",
+    hint: "Move matching liquid colors into clean tubes.",
+    step: "Tap a tube to pick up the top liquid, then tap a valid tube to pour it.",
+  },
+  {
+    id: "wire-route",
+    role: "engineer",
+    type: "connect-dots",
+    title: "Reconnect Circuit",
+    hint: "Tap dots 1 through 5 to restore the maintenance circuit.",
+    step: "Follow the numbered route without skipping a dot.",
+  },
+  {
+    id: "part-match",
+    role: "engineer",
+    type: "matching",
+    title: "Match Spare Parts",
+    hint: "Find all matching boat system icons.",
+    step: "Flip two cards at a time and pair every icon.",
+  },
+  {
+    id: "fuel-sort",
+    role: "engineer",
+    type: "liquid-sort",
+    title: "Separate Fuel Additives",
+    hint: "Sort the fluids before the engine clogs.",
+    step: "Use the empty tube as your workspace.",
+  },
+  {
+    id: "valve-route",
+    role: "engineer",
+    type: "connect-dots",
+    title: "Trace Bilge Valve Path",
+    hint: "Tap each numbered valve in order.",
+    step: "The circuit glows as you trace the correct route.",
+  },
+  {
+    id: "breaker-balance",
+    role: "engineer",
+    type: "breaker-balance",
+    title: "Balance Breaker Panel",
+    targetSwitches: ["nav", "fuel", "gps", "defense"],
+    hint: "Activate the target breakers and leave the others resting.",
+    step: "Read the target row and settle the right switches.",
+  },
+  {
+    id: "cargo-sort",
+    role: "engineer",
+    type: "cargo-sort",
+    title: "Cargo Grouping",
+    targetGroups: { fruit: 3, tools: 3, treasure: 3 },
+    hint: "Drag cargo into the matching hold lane by category.",
+    step: "Group the crates before the boat lists.",
+  },
+  {
+    id: "pulse-sequence",
+    role: "engineer",
+    type: "sequence-repeat",
+    title: "Power Pulse Repeat",
+    sequence: ["amber", "blue", "amber", "green"],
+    hint: "Repeat the pulse lights in the same order.",
+    step: "Watch once, then repeat the sequence cleanly.",
+  },
 ];
 
 function makeCosmeticState() {
@@ -165,26 +365,6 @@ function unlockCosmeticsForPage(room, pageNumber) {
   return unlockedNow;
 }
 
-const SWITCHES = [
-  "nav", "radio", "pump", "fuel", "lights", "gps", "manual", "defense", "aux-a", "aux-b", "aux-c", "aux-d",
-].map((id, index) => ({ id, name: "", on: index % 3 !== 0, alert: index < 8 }));
-
-const CAPTAIN_TASKS = [
-  { id: "radio-check", role: "captain", type: "word-search", title: "Decode Radio Call", target: "RADIO", hint: "Tap the letters R-A-D-I-O in order. Say the word aloud when it completes.", step: "Find the hidden comms word and confirm it with your partner." },
-  { id: "signal-flag", role: "captain", type: "word-search", title: "Signal Flag Scan", target: "ANCHOR", hint: "Trace A-N-C-H-O-R to recover the safe harbor signal.", step: "Read the target word, then tap each letter in order." },
-  { id: "plot-course", role: "captain", type: "letter-bank", title: "Build Navigation Term", target: "COMPASS", letters: "ASCOMPS", hint: "Use all letters to build the missing manual heading: COMPASS.", step: "Tap letters in the correct order to assemble the heading." },
-  { id: "storm-phrase", role: "captain", type: "letter-bank", title: "Repair Radio Phrase", target: "MAYDAY", letters: "YDAMAY", hint: "Assemble the emergency radio call.", step: "Build the phrase and tell the engineer the warning is clear." },
-  { id: "treasure-term", role: "captain", type: "letter-bank", title: "Treasure Clue Phrase", target: "BERRY", letters: "RYEBR", hint: "Build the hidden clue word.", step: "Assemble the clue word to add it to the owner's manual." },
-];
-
-const ENGINEER_TASKS = [
-  { id: "coolant-sort", role: "engineer", type: "liquid-sort", title: "Balance Coolant Tubes", hint: "Move matching liquid colors into clean tubes.", step: "Tap a tube to pick up the top liquid, then tap a valid tube to pour it." },
-  { id: "wire-route", role: "engineer", type: "connect-dots", title: "Reconnect Circuit", hint: "Tap dots 1 through 5 to restore the maintenance circuit.", step: "Follow the numbered route without skipping a dot." },
-  { id: "part-match", role: "engineer", type: "matching", title: "Match Spare Parts", hint: "Find all matching boat system icons.", step: "Flip two cards at a time and pair every icon." },
-  { id: "fuel-sort", role: "engineer", type: "liquid-sort", title: "Separate Fuel Additives", hint: "Sort the fluids before the engine clogs.", step: "Use the empty tube as your workspace." },
-  { id: "valve-route", role: "engineer", type: "connect-dots", title: "Trace Bilge Valve Path", hint: "Tap each numbered valve in order.", step: "The circuit glows as you trace the correct route." },
-];
-
 function cleanName(name, fallback = "Crewmate") {
   return String(name || fallback).trim().slice(0, 18) || fallback;
 }
@@ -202,22 +382,155 @@ function makeLog(text) {
 
 function addLog(room, text) {
   room.log.unshift(makeLog(text));
-  room.log = room.log.slice(0, 10);
+  room.log = room.log.slice(0, 16);
 }
 
 function clamp(value, min = 0, max = 100) {
   return Math.max(min, Math.min(max, value));
 }
 
-function pickTask(role, completed = []) {
+function pickTask(role, used = [], challengeType = "general") {
   const deck = role === "captain" ? CAPTAIN_TASKS : ENGINEER_TASKS;
-  const options = deck.filter((task) => !completed.includes(task.id));
-  const pool = options.length ? options : deck;
+  const preferred = {
+    "launch-sequence": role === "captain" ? ["radio-check", "plot-course", "semaphore-relay"] : ["breaker-balance", "wire-route", "pulse-sequence"],
+    "treasure-grid": role === "captain" ? ["treasure-term", "signal-flag", "semaphore-relay"] : ["cargo-sort", "part-match", "fuel-sort"],
+    "pirate-defense": role === "captain" ? ["pirate-warning", "signal-flag", "radio-check"] : ["breaker-balance", "cargo-sort", "pulse-sequence"],
+    "storm-recovery": role === "captain" ? ["storm-phrase", "plot-course", "code-select"] : ["wire-route", "valve-route", "liquid-sort"],
+  }[challengeType] || [];
+  const boostedDeck = deck.filter((task) => preferred.includes(task.id));
+  const sourceDeck = boostedDeck.length ? boostedDeck : deck;
+  const options = sourceDeck.filter((task) => !used.includes(task.id));
+  const pool = options.length ? options : sourceDeck;
   return { ...pool[Math.floor(Math.random() * pool.length)], nonce: crypto.randomUUID() };
 }
 
 function newPlayer(name, seat = null) {
   return { id: crypto.randomUUID(), name: cleanName(name), seat, score: 0, connectedAt: Date.now() };
+}
+
+function initialScene() {
+  return {
+    state: "idle-cruise",
+    title: VOYAGE_SCENES["idle-cruise"].title,
+    subtitle: VOYAGE_SCENES["idle-cruise"].subtitle,
+    mood: VOYAGE_SCENES["idle-cruise"].mood,
+    callout: VOYAGE_SCENES["idle-cruise"].callout,
+    acknowledgedBy: [],
+  };
+}
+
+function initialCampaign() {
+  return {
+    started: false,
+    chapterOrder: CHAPTERS.map((chapter) => chapter.id),
+    currentChapterId: CHAPTERS[0].id,
+    chapterIndex: 0,
+    encounterIndex: 0,
+    unlockedChapters: [CHAPTERS[0].id, CHAPTERS[1].id],
+    completedChapterIds: [],
+    voyageHistory: [],
+  };
+}
+
+function initialEncounter() {
+  return {
+    phase: "lobby",
+    challengeType: null,
+    difficulty: 1,
+    startedAt: null,
+    timerEndsAt: null,
+    captainComplete: false,
+    engineerComplete: false,
+    failedAttempts: 0,
+    sharedConfirmedBy: [],
+    lastFailureAt: null,
+  };
+}
+
+function initialRoute() {
+  return { selected: null, pendingOptions: [CHAPTERS[1].id, CHAPTERS[3].id], prompt: CHAPTERS[0].routeLabel };
+}
+
+function chapterById(id) {
+  return CHAPTER_LOOKUP[id] || CHAPTERS[0];
+}
+
+function currentChapter(room) {
+  return chapterById(room.campaign.currentChapterId);
+}
+
+function chapterSummaries() {
+  return CHAPTERS.map((chapter) => ({
+    id: chapter.id,
+    title: chapter.title,
+    theme: chapter.theme,
+    sceneState: chapter.sceneState,
+  }));
+}
+
+function sceneSnapshotForRoom(room) {
+  const chapter = currentChapter(room);
+  const scene = VOYAGE_SCENES[room.scene.state] || VOYAGE_SCENES["idle-cruise"];
+  return {
+    state: scene.id,
+    title: scene.title,
+    subtitle: scene.subtitle,
+    mood: scene.mood,
+    callout: scene.callout,
+    chapterTitle: chapter.title,
+    challengeType: room.encounter.challengeType,
+    equipped: { ...room.cosmetics.equipped },
+  };
+}
+
+function assignEncounterTasks(room) {
+  const chapter = currentChapter(room);
+  room.tasks = {
+    captain: pickTask("captain", room.completed.captain, chapter.challengeType),
+    engineer: pickTask("engineer", room.completed.engineer, chapter.challengeType),
+  };
+}
+
+function applySceneState(room, sceneState) {
+  const scene = VOYAGE_SCENES[sceneState] || VOYAGE_SCENES["idle-cruise"];
+  room.scene = {
+    state: scene.id,
+    title: scene.title,
+    subtitle: scene.subtitle,
+    mood: scene.mood,
+    callout: scene.callout,
+    acknowledgedBy: [],
+  };
+}
+
+function setupChapter(room, chapterId) {
+  const chapter = chapterById(chapterId);
+  room.campaign.currentChapterId = chapter.id;
+  room.campaign.chapterIndex = room.campaign.chapterOrder.indexOf(chapter.id);
+  room.campaign.encounterIndex = 0;
+  room.encounter = {
+    phase: "briefing",
+    challengeType: chapter.challengeType,
+    difficulty: chapter.difficulty,
+    startedAt: Date.now(),
+    timerEndsAt: null,
+    captainComplete: false,
+    engineerComplete: false,
+    failedAttempts: 0,
+    sharedConfirmedBy: [],
+    lastFailureAt: null,
+  };
+  room.route = {
+    selected: null,
+    pendingOptions: chapter.routes,
+    prompt: chapter.routeLabel,
+  };
+  room.rewardQueue = [];
+  room.reveal = null;
+  room.event = null;
+  applySceneState(room, chapter.sceneState);
+  assignEncounterTasks(room);
+  addLog(room, `Chapter ready: ${chapter.title}. ${chapter.briefing}`);
 }
 
 function makeRoom(name) {
@@ -230,24 +543,22 @@ function makeRoom(name) {
     clients: new Map(),
     players: { [host.id]: host },
     seats: { captain: host.id, engineer: null },
-    mission: {
-      started: false,
-      index: 0,
-      checklist: { captain: false, engineer: false },
-      completedStages: [],
-      startedAt: null,
-    },
+    campaign: initialCampaign(),
+    encounter: initialEncounter(),
+    route: initialRoute(),
+    rewardQueue: [],
     stats: { hull: 82, power: 70, morale: 76, manualPages: 0, progress: 0, treasure: 0, piratePressure: 0 },
     gauges: { left: 44, center: 62, right: 38 },
     switches: SWITCHES.map((item) => ({ ...item })),
     completed: { captain: [], engineer: [] },
     tasks: { captain: pickTask("captain"), engineer: pickTask("engineer") },
-    event: null,
-    treasureHunt: null,
     cosmetics: makeCosmeticState(),
+    scene: initialScene(),
+    treasureHunt: null,
+    event: null,
     reveal: null,
     lastSuccess: null,
-    log: [makeLog("Room created. Claim seats, then start the voyage.")],
+    log: [makeLog("Room created. Claim seats, inspect the chapter card, then launch the voyage.")],
   };
   rooms.set(code, room);
   return { room, playerId: host.id };
@@ -264,63 +575,133 @@ function joinExistingRoom(code, name) {
   return { room, playerId: player.id };
 }
 
-function currentStage(room) {
-  return MISSION_STAGES[Math.min(room.mission.index, MISSION_STAGES.length - 1)];
-}
-
-function startMission(room) {
-  room.mission.started = true;
-  room.mission.index = 0;
-  room.mission.startedAt = Date.now();
-  room.mission.checklist = { captain: false, engineer: false };
+function startCampaign(room) {
+  room.campaign.started = true;
+  room.campaign.voyageHistory = [];
+  room.campaign.completedChapterIds = [];
+  room.stats.progress = 0;
+  room.rewardQueue = [];
   room.reveal = null;
   room.event = null;
-  addLog(room, `Voyage started: ${currentStage(room).title}.`);
+  setupChapter(room, CHAPTERS[0].id);
+  room.lastSuccess = {
+    id: crypto.randomUUID(),
+    at: Date.now(),
+    text: `Voyage launched: ${currentChapter(room).title}.`,
+  };
 }
 
-function advanceMissionIfReady(room) {
-  if (!room.mission.started) return;
-  const { captain, engineer } = room.mission.checklist;
-  if (!captain || !engineer) return;
+function beginEncounter(room) {
+  const chapter = currentChapter(room);
+  room.encounter.phase = "challenge";
+  room.encounter.startedAt = Date.now();
+  room.encounter.timerEndsAt = Date.now() + chapter.timerMs;
+  room.encounter.captainComplete = false;
+  room.encounter.engineerComplete = false;
+  room.encounter.sharedConfirmedBy = [];
+  room.reveal = null;
+  room.event = null;
+  room.lastSuccess = { id: crypto.randomUUID(), at: Date.now(), text: `${chapter.title} challenge started.` };
+  addLog(room, `Challenge started for ${chapter.title}. Captain and Engineer must both complete their assignments.`);
+}
 
-  const stage = currentStage(room);
-  room.mission.completedStages.push(stage.id);
-  room.stats.progress = clamp(room.stats.progress + 15);
+function queueChapterRewards(room) {
+  const chapter = currentChapter(room);
+  room.stats.progress = clamp(room.stats.progress + 25);
+  room.stats.treasure = clamp(room.stats.treasure + chapter.rewardTreasure);
   room.stats.manualPages += 1;
-  room.stats.treasure = clamp(room.stats.treasure + 10);
-  room.stats.morale = clamp(room.stats.morale + 7);
-
+  room.stats.morale = clamp(room.stats.morale + 8);
+  room.stats.power = clamp(room.stats.power + 6);
   const cosmeticUnlocks = unlockCosmeticsForPage(room, room.stats.manualPages);
-
+  room.rewardQueue = [
+    {
+      id: crypto.randomUUID(),
+      type: "manual",
+      title: chapter.resolutionTitle,
+      body: chapter.resolutionBody,
+      pageNumber: room.stats.manualPages,
+      unlocks: cosmeticUnlocks,
+      treasure: chapter.rewardTreasure,
+    },
+  ];
   room.reveal = {
     id: crypto.randomUUID(),
     type: "manual",
     pageNumber: room.stats.manualPages,
-    title: stage.rewardTitle,
-    body: stage.rewardBody,
-    clue: stage.clue,
+    title: chapter.resolutionTitle,
+    body: chapter.resolutionBody,
+    clue: chapter.routeLabel,
     unlocks: cosmeticUnlocks,
   };
+}
 
+function completeChallengeIfReady(room) {
+  if (room.encounter.phase !== "challenge") return;
+  if (!room.encounter.captainComplete || !room.encounter.engineerComplete) return;
+  room.encounter.phase = "resolution";
+  room.encounter.timerEndsAt = null;
+  room.encounter.sharedConfirmedBy = [];
+  room.campaign.encounterIndex = 2;
+  queueChapterRewards(room);
   room.lastSuccess = {
     id: crypto.randomUUID(),
     at: Date.now(),
-    text: `Manual page ${room.stats.manualPages} unlocked: ${stage.rewardTitle}`,
+    text: `${currentChapter(room).title} cleared. Confirm the next route together.`,
   };
+  addLog(room, `Challenge cleared: ${currentChapter(room).title}. Both roles completed their work.`);
+}
 
-  addLog(room, `Stage cleared: ${stage.title}. Manual page ${room.stats.manualPages} unlocked.`);
+function failCurrentChallenge(room) {
+  const chapter = currentChapter(room);
+  room.encounter.failedAttempts += 1;
+  room.encounter.lastFailureAt = Date.now();
+  room.encounter.phase = "briefing";
+  room.encounter.timerEndsAt = null;
+  room.encounter.captainComplete = false;
+  room.encounter.engineerComplete = false;
+  room.stats.power = clamp(room.stats.power - 10);
+  room.stats.morale = clamp(room.stats.morale - 7);
+  room.stats.hull = clamp(room.stats.hull - 5);
+  assignEncounterTasks(room);
+  room.lastSuccess = {
+    id: crypto.randomUUID(),
+    at: Date.now(),
+    text: `${chapter.title} slipped, but the crew can replay this encounter.`,
+  };
+  addLog(room, `${chapter.title} timed out. Soft failure applied; the encounter resets with a lighter penalty.`);
+}
 
-  if (stage.event) {
-    room.event = { ...EVENTS[stage.event], startedAt: Date.now() };
-    addLog(room, `${room.event.title}: ${room.event.subtitle}`);
-  }
+function chooseRoute(room, nextChapterId) {
+  const chapter = chapterById(nextChapterId);
+  if (!room.route.pendingOptions.includes(chapter.id)) return { ok: false, error: "That route is not available." };
+  room.route.selected = chapter.id;
+  room.lastSuccess = { id: crypto.randomUUID(), at: Date.now(), text: `Route selected: ${chapter.title}.` };
+  addLog(room, `The crew marked the next destination: ${chapter.title}.`);
+  return { ok: true };
+}
 
-  room.mission.index = Math.min(room.mission.index + 1, MISSION_STAGES.length - 1);
-  room.mission.checklist = { captain: false, engineer: false };
+function claimRewardsAndAdvance(room) {
+  const nextId = room.route.selected || room.route.pendingOptions[0] || CHAPTERS[0].id;
+  const currentId = currentChapter(room).id;
+  room.campaign.voyageHistory.push({
+    chapterId: currentId,
+    completedAt: Date.now(),
+    rewards: room.rewardQueue.map((reward) => reward.title),
+  });
+  if (!room.campaign.completedChapterIds.includes(currentId)) room.campaign.completedChapterIds.push(currentId);
+  if (!room.campaign.unlockedChapters.includes(nextId)) room.campaign.unlockedChapters.push(nextId);
+  room.rewardQueue = [];
+  room.reveal = null;
+  setupChapter(room, nextId);
+  room.lastSuccess = {
+    id: crypto.randomUUID(),
+    at: Date.now(),
+    text: `Course set for ${currentChapter(room).title}.`,
+  };
 }
 
 function startTreasureHunt(room) {
-  const round = TREASURE_ROUNDS[(room.stats.manualPages + room.mission.completedStages.length) % TREASURE_ROUNDS.length];
+  const round = TREASURE_ROUNDS[(room.stats.manualPages + room.campaign.voyageHistory.length) % TREASURE_ROUNDS.length];
   room.treasureHunt = {
     ...round,
     active: true,
@@ -331,10 +712,9 @@ function startTreasureHunt(room) {
     guesses: [],
     startedAt: Date.now(),
   };
-  room.event = null;
-  room.reveal = null;
-  room.lastSuccess = { id: crypto.randomUUID(), at: Date.now(), text: `Treasure hunt started: ${round.title}` };
-  addLog(room, `${round.title} started. Captain reads the clue; Engineer taps the GPS grid.`);
+  applySceneState(room, "treasure-sighting");
+  room.lastSuccess = { id: crypto.randomUUID(), at: Date.now(), text: `Treasure map opened: ${round.title}` };
+  addLog(room, `${round.title} started. Captain reads the clue; Engineer works the grid.`);
 }
 
 function resolveTreasureGuess(room, playerId, coordinate) {
@@ -360,7 +740,7 @@ function resolveTreasureGuess(room, playerId, coordinate) {
       pageNumber: room.stats.manualPages + 1,
       title: `Treasure Found: ${hunt.title}`,
       body: hunt.reward,
-      clue: "The crew completed a real co-op communication round.",
+      clue: "The crew completed a real co-op map round.",
     };
     room.lastSuccess = { id: crypto.randomUUID(), at: Date.now(), text: `${player.name} found the treasure at ${guess}.` };
     addLog(room, `${player.name} tapped ${guess}. Treasure found: ${hunt.reward}`);
@@ -387,13 +767,27 @@ function resolveTreasureGuess(room, playerId, coordinate) {
 
 function clearTreasureHunt(room) {
   room.treasureHunt = null;
-  room.event = null;
-  addLog(room, "Treasure hunt closed. Back to the cockpit mission.");
+  applySceneState(room, currentChapter(room).sceneState);
+  addLog(room, "Treasure hunt closed. Back to the voyage flow.");
 }
 
 function publicRoom(room) {
   const { clients, ...safe } = room;
-  return { ...safe, currentStage: currentStage(room), missionStages: MISSION_STAGES.map(({ id, title }) => ({ id, title })) };
+  const chapter = currentChapter(room);
+  const joinUrl = `/?room=${encodeURIComponent(room.code)}`;
+  return {
+    ...safe,
+    currentChapter: chapter,
+    sceneSnapshot: sceneSnapshotForRoom(room),
+    routeChoices: room.route.pendingOptions.map((id) => ({
+      id,
+      title: chapterById(id).title,
+      theme: chapterById(id).theme,
+      selected: room.route.selected === id,
+    })),
+    joinUrl,
+    chapterSummaries: chapterSummaries(),
+  };
 }
 
 function sendJson(res, status, data) {
@@ -432,11 +826,16 @@ function completeTask(room, playerId, role, result = {}) {
 
   player.score += 1;
   room.completed[role].push(task.id);
-  room.mission.checklist[role] = true;
-  room.stats.power = clamp(room.stats.power + (role === "engineer" ? 10 : 4));
-  room.stats.hull = clamp(room.stats.hull + (role === "engineer" ? 7 : 3));
-  room.stats.morale = clamp(room.stats.morale + (role === "captain" ? 9 : 4));
-  room.stats.progress = clamp(room.stats.progress + 5);
+  if (role === "captain") {
+    room.encounter.captainComplete = true;
+    room.stats.morale = clamp(room.stats.morale + 8);
+    room.stats.progress = clamp(room.stats.progress + 6);
+  } else {
+    room.encounter.engineerComplete = true;
+    room.stats.power = clamp(room.stats.power + 10);
+    room.stats.hull = clamp(room.stats.hull + 8);
+    room.stats.progress = clamp(room.stats.progress + 6);
+  }
   room.stats.piratePressure = clamp(room.stats.piratePressure - 8);
   room.gauges.left = clamp(room.gauges.left + Math.floor(Math.random() * 15) - 5, 5, 95);
   room.gauges.center = clamp(room.gauges.center + Math.floor(Math.random() * 15) - 5, 5, 95);
@@ -456,8 +855,7 @@ function completeTask(room, playerId, role, result = {}) {
 
   const note = result.note ? `: ${result.note}` : "";
   addLog(room, `${player.name} completed ${task.title}${note}.`);
-  room.tasks[role] = pickTask(role, room.completed[role]);
-  advanceMissionIfReady(room);
+  completeChallengeIfReady(room);
   return { ok: true };
 }
 
@@ -488,14 +886,47 @@ function equipCosmetic(room, player, payload = {}) {
   return { ok: true };
 }
 
+function acknowledgeScene(room, player) {
+  if (!player.seat) return { ok: false, error: "Claim a seat first." };
+  if (!room.scene.acknowledgedBy.includes(player.seat)) room.scene.acknowledgedBy.push(player.seat);
+  if (!room.encounter.sharedConfirmedBy.includes(player.seat)) room.encounter.sharedConfirmedBy.push(player.seat);
+  room.lastSuccess = { id: crypto.randomUUID(), at: Date.now(), text: `${player.name} confirmed the shared callout.` };
+  if (room.encounter.phase === "resolution" && room.encounter.sharedConfirmedBy.includes("captain") && room.encounter.sharedConfirmedBy.includes("engineer")) {
+    addLog(room, "Both roles confirmed the route briefing. Claim the reward and continue.");
+  }
+  return { ok: true };
+}
+
 function handleAction(room, playerId, type, payload = {}) {
   const player = room.players[playerId];
-  if (!["event:clear", "reveal:clear", "treasure:clear"].includes(type) && !player) return { ok: false, error: "Player not found." };
+  if (!["treasure:clear"].includes(type) && !player && type !== "campaign:start") return { ok: false, error: "Player not found." };
 
-  if (type === "mission:start") {
-    startMission(room);
+  if (type === "campaign:start" || type === "mission:start") {
+    startCampaign(room);
     return { ok: true };
   }
+
+  if (type === "encounter:begin") {
+    beginEncounter(room);
+    return { ok: true };
+  }
+
+  if (type === "chapter:selectRoute") {
+    return chooseRoute(room, String(payload.chapterId || ""));
+  }
+
+  if (type === "reward:claim") {
+    if (room.encounter.phase !== "resolution") return { ok: false, error: "No reward is ready yet." };
+    if (!(room.encounter.sharedConfirmedBy.includes("captain") && room.encounter.sharedConfirmedBy.includes("engineer"))) {
+      return { ok: false, error: "Both roles must confirm the next route first." };
+    }
+    claimRewardsAndAdvance(room);
+    return { ok: true };
+  }
+
+  if (type === "scene:acknowledge") return acknowledgeScene(room, player);
+
+  if (type === "qr:join") return { ok: true, joinUrl: `/?room=${encodeURIComponent(room.code)}` };
 
   if (type === "seat:claim") {
     const seat = payload.seat;
@@ -545,30 +976,10 @@ function handleAction(room, playerId, type, payload = {}) {
     return { ok: true };
   }
 
-  if (type === "treasure:guess") {
-    return resolveTreasureGuess(room, playerId, payload.coordinate);
-  }
+  if (type === "treasure:guess") return resolveTreasureGuess(room, playerId, payload.coordinate);
 
   if (type === "treasure:clear") {
     clearTreasureHunt(room);
-    return { ok: true };
-  }
-
-  if (type === "event:trigger") {
-    const event = EVENTS[payload.id] || EVENTS["treasure-hunt"];
-    room.event = { ...event, startedAt: Date.now() };
-    addLog(room, `${event.title}: ${event.subtitle}`);
-    return { ok: true };
-  }
-
-  if (type === "event:clear") {
-    room.event = null;
-    addLog(room, "Event acknowledged. Back to the cockpit.");
-    return { ok: true };
-  }
-
-  if (type === "reveal:clear") {
-    room.reveal = null;
     return { ok: true };
   }
 
@@ -627,13 +1038,12 @@ function serveStatic(req, res) {
   });
 }
 
-
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   try {
     if ((req.method === "GET" || req.method === "HEAD") && url.pathname === "/health") {
       if (req.method === "HEAD") {
-        const payload = JSON.stringify({ ok: true, version: "0.5.3" });
+        const payload = JSON.stringify({ ok: true, version: "0.6.0" });
         res.writeHead(200, {
           "Content-Type": "application/json; charset=utf-8",
           "Content-Length": Buffer.byteLength(payload),
@@ -642,7 +1052,7 @@ const server = http.createServer(async (req, res) => {
         res.end();
         return;
       }
-      return sendJson(res, 200, { ok: true, version: "0.5.3" });
+      return sendJson(res, 200, { ok: true, version: "0.6.0" });
     }
 
     if (req.method === "POST" && url.pathname === "/api/create") {
@@ -699,18 +1109,21 @@ const server = http.createServer(async (req, res) => {
 
 setInterval(() => {
   for (const room of rooms.values()) {
-    room.stats.power = clamp(room.stats.power - (room.mission.started ? 1 : 0));
-    if (room.stats.power < 30) room.stats.hull = clamp(room.stats.hull - 2);
-    if (room.event?.id === "pirate-approach") room.stats.piratePressure = clamp(room.stats.piratePressure + 2);
-    if (room.mission.started && Math.random() > 0.72) {
-      const target = room.switches[Math.floor(Math.random() * room.switches.length)];
-      target.alert = true;
-      target.on = false;
+    if (room.campaign.started && room.encounter.phase === "challenge") {
+      room.stats.power = clamp(room.stats.power - 1);
+      room.stats.piratePressure = clamp(room.stats.piratePressure + (currentChapter(room).id === "pirate-intercept" ? 2 : 1));
+      if (room.encounter.timerEndsAt && room.encounter.timerEndsAt <= Date.now()) failCurrentChallenge(room);
+      if (Math.random() > 0.72) {
+        const target = room.switches[Math.floor(Math.random() * room.switches.length)];
+        target.alert = true;
+        target.on = false;
+      }
     }
+    if (room.stats.power < 30) room.stats.hull = clamp(room.stats.hull - 2);
     broadcast(room);
   }
 }, 9000);
 
 server.listen(PORT, () => {
-  console.log(`Treasure Crew Co-op v0.5.3 running at http://localhost:${PORT}`);
+  console.log(`Treasure Crew Co-op v0.6.0 running at http://localhost:${PORT}`);
 });

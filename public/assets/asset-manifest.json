@@ -9,6 +9,7 @@
         "src": "",
         "thumbnail": "",
         "slot": "crew",
+        "sceneRole": "captain-player",
         "status": "css-fallback",
         "scale": 1,
         "rotation": [
@@ -23,6 +24,7 @@
         "src": "assets/models/players/player-captain.glb",
         "thumbnail": "assets/thumbnails/players/player-captain.png",
         "slot": "crew",
+        "sceneRole": "captain-player",
         "status": "placeholder-ready",
         "scale": 1,
         "rotation": [
@@ -43,6 +45,7 @@
         "src": "assets/models/pirates/pirate-default.glb",
         "thumbnail": "assets/thumbnails/pirates/pirate-default.png",
         "slot": "enemy",
+        "sceneRole": "pirate-captain",
         "status": "placeholder-ready",
         "scale": 1,
         "rotation": [
@@ -63,6 +66,7 @@
         "src": "assets/models/boats/boat-glossy-sloop.glb",
         "thumbnail": "assets/thumbnails/boats/boat-glossy-sloop.png",
         "slot": "player-boat",
+        "sceneRole": "player-boat",
         "status": "placeholder-ready",
         "scale": 1,
         "rotation": [
@@ -70,6 +74,7 @@
           0,
           0
         ],
+        "position": [0, 0, 0],
         "thumbnailSize": [
           512,
           512
@@ -81,6 +86,7 @@
         "src": "assets/models/boats/boat-pirate-brown.glb",
         "thumbnail": "assets/thumbnails/boats/boat-pirate-brown.png",
         "slot": "pirate-boat",
+        "sceneRole": "pirate-boat",
         "status": "placeholder-ready",
         "scale": 1,
         "rotation": [
@@ -88,6 +94,8 @@
           0,
           0
         ],
+        "position": [1, 0, 0],
+        "chapterTags": ["pirate-intercept"],
         "thumbnailSize": [
           512,
           512
@@ -101,6 +109,7 @@
         "src": "assets/models/islands/island-berry-cove.glb",
         "thumbnail": "assets/thumbnails/islands/island-berry-cove.png",
         "slot": "treasure-island",
+        "sceneRole": "treasure-island",
         "status": "placeholder-ready",
         "scale": 1,
         "rotation": [
@@ -108,6 +117,8 @@
           0,
           0
         ],
+        "position": [0, 0, -1],
+        "chapterTags": ["treasure-waters"],
         "thumbnailSize": [
           512,
           512
@@ -121,6 +132,7 @@
         "src": "assets/models/environments/env-sky-cockpit.glb",
         "thumbnail": "assets/thumbnails/environments/env-sky-cockpit.png",
         "slot": "environment",
+        "sceneRole": "environment",
         "status": "placeholder-ready",
         "scale": 1,
         "rotation": [
@@ -141,6 +153,7 @@
         "src": "",
         "thumbnail": "",
         "slot": "cockpit-wheel",
+        "sceneRole": "cockpit-wheel",
         "unlockAtManualPages": 0,
         "status": "css-fallback"
       },
@@ -150,8 +163,10 @@
         "src": "assets/models/steering-wheels/wheel-brass.glb",
         "thumbnail": "assets/thumbnails/steering-wheels/wheel-brass.png",
         "slot": "cockpit-wheel",
+        "sceneRole": "cockpit-wheel",
         "unlockAtManualPages": 1,
         "status": "placeholder-ready",
+        "chapterTags": ["harbor-launch"],
         "thumbnailSize": [
           512,
           512
@@ -163,8 +178,10 @@
         "src": "assets/models/steering-wheels/wheel-pirate.glb",
         "thumbnail": "assets/thumbnails/steering-wheels/wheel-pirate.png",
         "slot": "cockpit-wheel",
+        "sceneRole": "cockpit-wheel",
         "unlockAtManualPages": 3,
         "status": "placeholder-ready",
+        "chapterTags": ["pirate-intercept"],
         "thumbnailSize": [
           512,
           512
@@ -178,6 +195,7 @@
         "src": "",
         "thumbnail": "",
         "slot": "player-seat",
+        "sceneRole": "captain-seat",
         "unlockAtManualPages": 0,
         "status": "css-fallback"
       },
@@ -187,6 +205,7 @@
         "src": "assets/models/seats/seat-cream.glb",
         "thumbnail": "assets/thumbnails/seats/seat-cream.png",
         "slot": "player-seat",
+        "sceneRole": "engineer-seat",
         "unlockAtManualPages": 2,
         "status": "placeholder-ready",
         "thumbnailSize": [
@@ -200,8 +219,10 @@
         "src": "assets/models/seats/seat-pirate.glb",
         "thumbnail": "assets/thumbnails/seats/seat-pirate.png",
         "slot": "player-seat",
+        "sceneRole": "engineer-seat",
         "unlockAtManualPages": 4,
         "status": "placeholder-ready",
+        "chapterTags": ["pirate-intercept"],
         "thumbnailSize": [
           512,
           512
