@@ -373,10 +373,31 @@ class SceneController {
     const sceneState = room?.sceneSnapshot?.state || "idle-cruise";
     const previewCategory = options.previewCategory || "players";
     const previewAssetId = options.previewAssetId || "";
+    const previewSrc = options.previewSrc || "";
+    const previewName = options.previewName || "Local Preview";
     if (this.mode === "preview") {
+      if (previewSrc) {
+        return [{
+          slot: "preview",
+          category: previewCategory,
+          item: { id: "local-preview", name: previewName, src: previewSrc, defaultIdle: "sitting" },
+          role:
+            previewCategory === "pirates" ? "pirate" :
+            previewCategory === "boats" ? "boat" :
+            previewCategory === "islands" ? "island" :
+            previewCategory === "environments" ? "environment" :
+            "captain",
+        }];
+      }
       const categoryItems = models[previewCategory] || [];
       const item = categoryItems.find((candidate) => candidate.id === previewAssetId) || categoryItems[0];
-      return item ? [{ slot: "preview", category: previewCategory, item, role: previewCategory === "pirates" ? "pirate" : "captain" }] : [];
+      const role =
+        previewCategory === "pirates" ? "pirate" :
+        previewCategory === "boats" ? "boat" :
+        previewCategory === "islands" ? "island" :
+        previewCategory === "environments" ? "environment" :
+        "captain";
+      return item ? [{ slot: "preview", category: previewCategory, item, role }] : [];
     }
 
     const captain = (models.players || []).find((item) => item.id === (equipped.captainPlayer || "player-default"));

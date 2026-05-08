@@ -253,6 +253,8 @@ async function syncSceneRuntime() {
       manifest: state.assetManifest,
       previewCategory: host.dataset.previewCategory || null,
       previewAssetId: host.dataset.previewAssetId || null,
+      previewSrc: host.dataset.previewSrc || null,
+      previewName: host.dataset.previewName || null,
       reducedMotion,
     });
   }
@@ -934,27 +936,22 @@ function hangarCardMarkup(category, item, selectedId, unlockedIds, equipped) {
 function thumbnailMarkup(category, item, status) {
   const thumbReady = item.thumbnail && state.assetStatus[normalizeAssetPath(item.thumbnail)];
   if (thumbReady) return `<img src="${publicAssetPath(item.thumbnail)}" alt="${escapeHtml(item.name)} thumbnail" />`;
-  if (item.src && status === "ready") return modelViewerMarkup(item.src, item.name, "thumb");
   return `<span class="fallback-asset-icon">${previewIcon(category, item.id)}</span>`;
 }
 
 function largePreviewMarkup(category, item, status) {
   const local = state.ui.localPreview;
   if (local) {
-    return `<div class="large-model-preview local"><div class="preview-badge">local preview only</div>${modelViewerMarkup(local.src, local.name, "large", true)}<strong>${escapeHtml(local.name)}</strong><small>This file is previewed from your device and is not uploaded. Copy it into the matching folder to make it part of the hosted game.</small></div>`;
-  }
-  if (["players", "pirates"].includes(category) && item.src && status === "ready") {
-    return `<div class="large-model-preview ready animated-preview"><div class="preview-badge">animated preview</div><div class="character-scene-preview" data-scene-host="hangar-preview" data-scene-mode="preview" data-preview-category="${escapeHtml(category)}" data-preview-asset-id="${escapeHtml(item.id)}"></div><strong>${escapeHtml(item.name)}</strong><small>Character-ready preview using the Three.js runtime with animation fallbacks.</small></div>`;
+    return `<div class="large-model-preview ready animated-preview local"><div class="preview-badge">local preview only</div><div class="character-scene-preview" data-scene-host="hangar-preview" data-scene-mode="preview" data-preview-category="${escapeHtml(category)}" data-preview-src="${escapeHtml(local.src)}" data-preview-name="${escapeHtml(local.name)}"></div><strong>${escapeHtml(local.name)}</strong><small>This file is previewed from your device and is not uploaded. Copy it into the matching folder to make it part of the hosted game.</small></div>`;
   }
   if (item.src && status === "ready") {
-    return `<div class="large-model-preview ready">${modelViewerMarkup(item.src, item.name, "large")}<strong>${escapeHtml(item.name)}</strong><small>Ready from manifest path</small></div>`;
+    const badge = ["players", "pirates"].includes(category) ? "animated preview" : "runtime preview";
+    const copy = ["players", "pirates"].includes(category)
+      ? "Character-ready preview using the Three.js runtime with animation fallbacks."
+      : "Runtime preview using the shared Three.js scene layer so hosted visuals match the live game.";
+    return `<div class="large-model-preview ready animated-preview"><div class="preview-badge">${badge}</div><div class="character-scene-preview" data-scene-host="hangar-preview" data-scene-mode="preview" data-preview-category="${escapeHtml(category)}" data-preview-asset-id="${escapeHtml(item.id)}"></div><strong>${escapeHtml(item.name)}</strong><small>${copy}</small></div>`;
   }
   return `<div class="large-model-preview fallback"><div class="fallback-turntable"><span>${previewIcon(category, item.id)}</span></div><strong>${escapeHtml(item.name || item.id)}</strong><small>${item.src ? "Model file is not present yet. Drop it into the listed path." : "This slot uses the CSS toy fallback."}</small></div>`;
-}
-
-function modelViewerMarkup(src, label, size = "thumb", alreadyPublic = false) {
-  const safeSrc = alreadyPublic ? src : publicAssetPath(src);
-  return `<model-viewer class="model-viewer-${size}" src="${escapeHtml(safeSrc)}" camera-controls auto-rotate interaction-prompt="none" shadow-intensity="0.65" exposure="1" alt="${escapeHtml(label || "3D model")}"></model-viewer>`;
 }
 
 function assetDescription(category, item, status) {

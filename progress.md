@@ -13,5 +13,6 @@ Original prompt: implement my assets into the game and plan out how we can make 
 - 2026-05-08: Added the first bundled Three.js presentation layer for animated 3D scenes.
 - Added build scripts for `scene-runtime.bundle.js` and a generated animation catalog sourced from the new FBX folder.
 - Added a Three.js scene runtime with persistent crew avatar dock, voyage hero diorama, and animated player/pirate hangar previews.
+- Removed `model-viewer` from the hosted client and moved all ready-state hangar previews onto the shared Three.js runtime, including local blob previews.
 - The new runtime uses the shipped GLBs for players, pirates, boats, islands, and environments, with state-driven procedural motion and clip fallback behavior.
 - Formalized the animation asset pipeline so FBX files remain source-only and are mapped to future runtime GLB clips via `public/assets/animations/README.md` and `animation-catalog.json`.
