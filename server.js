@@ -631,7 +631,19 @@ function serveStatic(req, res) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   try {
-    if (req.method === "GET" && url.pathname === "/health") return sendJson(res, 200, { ok: true, version: "0.5.3" });
+    if ((req.method === "GET" || req.method === "HEAD") && url.pathname === "/health") {
+      if (req.method === "HEAD") {
+        const payload = JSON.stringify({ ok: true, version: "0.5.3" });
+        res.writeHead(200, {
+          "Content-Type": "application/json; charset=utf-8",
+          "Content-Length": Buffer.byteLength(payload),
+          "Cache-Control": "no-store",
+        });
+        res.end();
+        return;
+      }
+      return sendJson(res, 200, { ok: true, version: "0.5.3" });
+    }
 
     if (req.method === "POST" && url.pathname === "/api/create") {
       const body = await readJson(req);
