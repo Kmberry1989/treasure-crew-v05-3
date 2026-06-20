@@ -1,25 +1,26 @@
-# Treasure Crew Co-op v0.5.3
+# Treasure Crew V1
 
-A mobile-first multiplayer web prototype for the glossy toy-boat co-op game concept.
+A mobile-first, exactly-2-player cooperative web adventure built around communication-first chapters, manifest-driven 3D assets, and short shared voyage interludes.
 
-V0.5 adds the **3D Hangar / Model Gallery** so you can start working real GLB/GLTF assets into the game: player models, pirate models, boats, islands, environments, steering wheels, player seats, GUI assets, and minigame art.
+This version commits to one canonical implementation base:
 
-The app still uses only Node built-ins for the server and plain browser JavaScript for the client. No npm package dependencies are required. The 3D preview uses the browser-side `<model-viewer>` web component loaded from a CDN in `public/index.html`; the game still runs without it, but GLB previews will fall back visually if the CDN is unavailable.
+- plain Node + SSE for multiplayer sync
+- plain browser JavaScript for the client
+- Three.js scene runtime for dioramas, character previews, and hangar previews
+- a single manifest-backed asset identity model
 
-## What is new in v0.5.3
+## What is new in V1
 
-- 3D Hangar section below the cockpit.
-- Category tabs for players, boats, steering wheels, seats, pirates, islands, and environments.
-- Large turntable-style preview area.
-- Manifest-based model slots with file readiness scanning.
-- Local GLB/GLTF preview without uploading the file.
-- Copy-path buttons for each expected asset location.
-- Multiplayer-synced equipment assignments.
-- Separate Captain and Engineer player model assignments.
-- Separate Captain and Engineer seat assignments.
-- Pirate, island, boat, environment, and steering wheel equipment slots.
-- Optional PNG thumbnail paths for every model slot.
-- Readiness panel for GUI and minigame assets.
+- Server code split into `src/server/config.js`, `src/server/state.js`, and `src/server/actions.js`.
+- Client code split into `public/app/` modules for room flow, asset loading, scene sync, tab rendering, and task widgets.
+- Canonical four-chapter loop: `Harbor Launch`, `Treasure Waters`, `Pirate Intercept`, `Storm Repair`.
+- New shared voyage interludes between chapters:
+  - waypoint confirmation
+  - pirate signal callout
+  - storm recovery choice
+  - harbor resupply stop
+- Canonical runtime asset IDs aligned to the shipped GLBs currently in `public/assets/models/`.
+- Hangar still supports local GLB/GLTF preview, but hosted gameplay now resolves only through the manifest-backed public assets.
 
 ## Install
 
@@ -27,7 +28,7 @@ The app still uses only Node built-ins for the server and plain browser JavaScri
 npm install
 ```
 
-There are no dependencies; this mainly verifies project metadata.
+This installs the build dependencies used for the Three.js scene bundle.
 
 ## Run locally
 
@@ -69,18 +70,15 @@ Start command: npm start
 Node version: 20+
 ```
 
-## Add your real 3D assets
+## Asset pipeline
 
-Drop GLB/GLTF files into the paths listed in `ASSET_SLOTS.md` or `public/assets/asset-manifest.json`.
-
-Example:
+The canonical asset registry is:
 
 ```text
-public/assets/models/boats/boat-glossy-sloop.glb
-public/assets/thumbnails/boats/boat-glossy-sloop.png
+public/assets/asset-manifest.json
 ```
 
-Then refresh the browser. The Hangar will scan the expected paths and show whether each asset file is ready or missing.
+The shipped runtime now expects the existing filenames that are already present under `public/assets/models/`. Replace those files in place or update the manifest deliberately when new art lands.
 
 ## Local model preview
 
@@ -91,26 +89,28 @@ Local preview files are not uploaded and are not saved to the project. To make a
 ## Project structure
 
 ```text
-server.js                         Node room server + static file server
-public/index.html                 App shell and model-viewer loader
-public/app.js                     Multiplayer client, minigames, and 3D Hangar
-public/styles.css                 Glossy toy cockpit + hangar visual system
-public/assets/asset-manifest.json Asset registry
-ASSET_SLOTS.md                    Exact file paths and model-slot notes
-GAME_DESIGN.md                    Game design and next-step notes
+server.js                         Node server entrypoint
+src/server/config.js              Chapters, tasks, unlocks, interludes
+src/server/state.js               Room state factories and selectors
+src/server/actions.js             Action handlers and room ticking
+public/index.html                 App shell
+public/app.js                     Client bootstrap
+public/app/                       Modular client features
+public/styles.css                 Shared visual system
+public/assets/asset-manifest.json Canonical runtime asset registry
 ```
 
-## Next ideal version
+## Current scope
 
-V0.6 should turn the 3D assets into a more game-like scene pipeline:
+- Exactly 2 active players: Captain and Engineer
+- Session-based room-code multiplayer
+- Communication-first chapter progression
+- Cosmetic/manual progression
+- Short shared interludes instead of free-roam sailing
 
-- Load equipped boat/island/environment models into a dedicated voyage scene.
-- Add a pirate encounter diorama.
-- Add animated cockpit controls using the equipped steering wheel and seats.
-- Add QR-code room joining.
-- Add audio and haptics.
+Not in V1:
 
-
-## v0.5.3 patch
-
-Fixed the tagged-template HTML helper so landing controls render correctly instead of mounting only interpolated values. This resolves the “Landing controls did not mount” warning.
+- open-world navigation
+- live naval combat
+- trade economy
+- accounts or persistence beyond the live room

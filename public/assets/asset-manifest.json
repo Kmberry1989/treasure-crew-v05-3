@@ -1,59 +1,13 @@
 {
-  "version": "0.7.0",
-  "notes": "V0.7.0 uses the shipped GLBs for runtime scenes and loads Mixamo-armature FBX clips directly for character animation retargeting.",
+  "version": "1.0.0",
+  "notes": "Canonical Treasure Crew V1 runtime asset manifest. The browser and server both expect these IDs.",
   "models": {
     "players": [
       {
-        "id": "player-default",
-        "name": "Captain Variant",
-        "src": "assets/models/players/player-captain.glb",
+        "id": "player-kyle",
+        "name": "Player Kyle",
+        "src": "assets/models/players/player_kyle.glb",
         "thumbnail": "assets/thumbnails/players/player-captain.png",
-        "slot": "crew",
-        "sceneRole": "captain-player",
-        "animationSet": "crew-core",
-        "defaultIdle": "standing-greeting",
-        "supportedClips": ["idle", "standing-greeting", "standing-clap", "thoughtful-head-shake", "sitting-and-pointing"],
-        "characterRig": "crew-biped",
-        "status": "runtime-ready",
-        "scale": 1,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "thumbnailSize": [
-          512,
-          512
-        ]
-      },
-      {
-        "id": "player-captain",
-        "name": "Captain Variant",
-        "src": "assets/models/players/player-captain.glb",
-        "thumbnail": "assets/thumbnails/players/player-captain.png",
-        "slot": "crew",
-        "sceneRole": "captain-player",
-        "animationSet": "crew-core",
-        "defaultIdle": "sitting",
-        "supportedClips": ["sitting", "standing-greeting", "silly-dancing", "sitting-clap", "sitting-laughing"],
-        "characterRig": "crew-biped",
-        "status": "placeholder-ready",
-        "scale": 1,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "thumbnailSize": [
-          512,
-          512
-        ]
-      },
-      {
-        "id": "sailor-kyle",
-        "name": "Sailor Kyle",
-        "src": "assets/models/players/sailor_kyle.glb",
-        "thumbnail": "",
         "slot": "crew",
         "sceneRole": "captain-player",
         "animationSet": "crew-core",
@@ -63,12 +17,12 @@
         "status": "runtime-ready",
         "scale": 1,
         "rotation": [0, 0, 0],
-        "chapterTags": ["harbor-launch", "storm-repair"]
+        "unlockAtManualPages": 0
       },
       {
-        "id": "sailor-rochelle",
-        "name": "Sailor Rochelle",
-        "src": "assets/models/players/sailor_rochelle.glb",
+        "id": "player-rochelle",
+        "name": "Player Rochelle",
+        "src": "assets/models/players/player_rochelle.glb",
         "thumbnail": "",
         "slot": "crew",
         "sceneRole": "engineer-player",
@@ -79,12 +33,12 @@
         "status": "runtime-ready",
         "scale": 1,
         "rotation": [0, 0, 0],
-        "chapterTags": ["treasure-waters"]
+        "unlockAtManualPages": 0
       },
       {
-        "id": "sailor-vickie",
-        "name": "Sailor Vickie",
-        "src": "assets/models/players/sailor_vickie.glb",
+        "id": "player-vickie",
+        "name": "Player Vickie",
+        "src": "assets/models/players/player_vickie.glb",
         "thumbnail": "",
         "slot": "crew",
         "sceneRole": "engineer-player",
@@ -95,38 +49,15 @@
         "status": "runtime-ready",
         "scale": 1,
         "rotation": [0, 0, 0],
-        "chapterTags": ["pirate-intercept", "storm-repair"]
+        "unlockAtManualPages": 5
       }
     ],
     "pirates": [
       {
-        "id": "pirate-default",
-        "name": "Pirate Toy Enemy",
-        "src": "assets/models/pirates/pirate-default.glb",
-        "thumbnail": "assets/thumbnails/pirates/pirate-default.png",
-        "slot": "enemy",
-        "sceneRole": "pirate-captain",
-        "animationSet": "pirate-core",
-        "defaultIdle": "hanging-idle",
-        "supportedClips": ["stable-sword-inward-slash", "surprised", "hanging-idle", "walking"],
-        "characterRig": "pirate-biped",
-        "status": "placeholder-ready",
-        "scale": 1,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "thumbnailSize": [
-          512,
-          512
-        ]
-      },
-      {
         "id": "pirate-one",
         "name": "Pirate Mate One",
         "src": "assets/models/pirates/pirate_1.glb",
-        "thumbnail": "",
+        "thumbnail": "assets/thumbnails/pirates/pirate-default.png",
         "slot": "enemy",
         "sceneRole": "pirate-captain",
         "animationSet": "pirate-core",
@@ -136,7 +67,7 @@
         "status": "runtime-ready",
         "scale": 1,
         "rotation": [0, 0, 0],
-        "chapterTags": ["pirate-intercept"]
+        "unlockAtManualPages": 3
       },
       {
         "id": "pirate-two",
@@ -152,178 +83,145 @@
         "status": "runtime-ready",
         "scale": 1,
         "rotation": [0, 0, 0],
-        "chapterTags": ["pirate-intercept"]
+        "unlockAtManualPages": 4
       }
     ],
     "boats": [
       {
-        "id": "boat-glossy-sloop",
-        "name": "Glossy Sloop",
-        "src": "assets/models/boats/boat-glossy-sloop.glb",
-        "thumbnail": "assets/thumbnails/boats/boat-glossy-sloop.png",
-        "slot": "player-boat",
-        "sceneRole": "player-boat",
-        "status": "placeholder-ready",
-        "scale": 1,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "position": [0, 0, 0],
-        "thumbnailSize": [
-          512,
-          512
-        ]
-      },
-      {
         "id": "boat-pirate-brown",
         "name": "Brown Pirate Ship",
-        "src": "assets/models/boats/boat-pirate-brown.glb",
+        "src": "assets/models/boats/boat_pirate.glb",
         "thumbnail": "assets/thumbnails/boats/boat-pirate-brown.png",
-        "slot": "pirate-boat",
-        "sceneRole": "pirate-boat",
-        "status": "placeholder-ready",
+        "slot": "player-boat",
+        "sceneRole": "player-boat",
+        "status": "runtime-ready",
         "scale": 1,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "position": [1, 0, 0],
-        "chapterTags": ["pirate-intercept"],
-        "thumbnailSize": [
-          512,
-          512
-        ]
+        "rotation": [0, 0, 0],
+        "position": [0, 0, 0],
+        "unlockAtManualPages": 0
       }
     ],
     "islands": [
       {
-        "id": "island-berry-cove",
-        "name": "Berry Cove Island",
-        "src": "assets/models/islands/island-berry-cove.glb",
+        "id": "island-castleberry-cove",
+        "name": "Castleberry Cove",
+        "src": "assets/models/islands/island-castleberry-cove.glb",
         "thumbnail": "assets/thumbnails/islands/island-berry-cove.png",
         "slot": "treasure-island",
         "sceneRole": "treasure-island",
-        "status": "placeholder-ready",
+        "status": "runtime-ready",
         "scale": 1,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
+        "rotation": [0, 0, 0],
         "position": [0, 0, -1],
-        "chapterTags": ["treasure-waters"],
-        "thumbnailSize": [
-          512,
-          512
-        ]
+        "unlockAtManualPages": 6
+      },
+      {
+        "id": "island-bigleaf-bluff",
+        "name": "Bigleaf Bluff",
+        "src": "assets/models/islands/island-bigleaf-bluff.glb",
+        "thumbnail": "",
+        "slot": "treasure-island",
+        "sceneRole": "treasure-island",
+        "status": "runtime-ready",
+        "scale": 1,
+        "rotation": [0, 0, 0],
+        "position": [0, 0, -1],
+        "unlockAtManualPages": 2
+      },
+      {
+        "id": "island-gemshine-cay",
+        "name": "Gemshine Cay",
+        "src": "assets/models/islands/island-gemshine-cay.glb",
+        "thumbnail": "",
+        "slot": "treasure-island",
+        "sceneRole": "treasure-island",
+        "status": "runtime-ready",
+        "scale": 1,
+        "rotation": [0, 0, 0],
+        "position": [0, 0, -1],
+        "unlockAtManualPages": 3
+      },
+      {
+        "id": "island-lava-lump",
+        "name": "Lava Lump",
+        "src": "assets/models/islands/island-lava-lump.glb",
+        "thumbnail": "",
+        "slot": "treasure-island",
+        "sceneRole": "treasure-island",
+        "status": "runtime-ready",
+        "scale": 1,
+        "rotation": [0, 0, 0],
+        "position": [0, 0, -1],
+        "unlockAtManualPages": 4
+      },
+      {
+        "id": "island-sandy-steps-isle",
+        "name": "Sandy Steps Isle",
+        "src": "assets/models/islands/island-sandy-steps-isle.glb",
+        "thumbnail": "",
+        "slot": "treasure-island",
+        "sceneRole": "treasure-island",
+        "status": "runtime-ready",
+        "scale": 1,
+        "rotation": [0, 0, 0],
+        "position": [0, 0, -1],
+        "unlockAtManualPages": 5
+      },
+      {
+        "id": "island-skullbone-bay",
+        "name": "Skullbone Bay",
+        "src": "assets/models/islands/island-skullbone-bay.glb",
+        "thumbnail": "",
+        "slot": "treasure-island",
+        "sceneRole": "treasure-island",
+        "status": "runtime-ready",
+        "scale": 1,
+        "rotation": [0, 0, 0],
+        "position": [0, 0, -1],
+        "unlockAtManualPages": 5
+      },
+      {
+        "id": "island-snowcap-nook",
+        "name": "Snowcap Nook",
+        "src": "assets/models/islands/island-snowcap-nook.glb",
+        "thumbnail": "",
+        "slot": "treasure-island",
+        "sceneRole": "treasure-island",
+        "status": "runtime-ready",
+        "scale": 1,
+        "rotation": [0, 0, 0],
+        "position": [0, 0, -1],
+        "unlockAtManualPages": 6
       }
     ],
     "environments": [
-      {
-        "id": "env-sky-cockpit",
-        "name": "Sky Cockpit Environment",
-        "src": "assets/models/environments/env-sky-cockpit.glb",
-        "thumbnail": "assets/thumbnails/environments/env-sky-cockpit.png",
-        "slot": "environment",
-        "sceneRole": "environment",
-        "status": "placeholder-ready",
-        "scale": 1,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "thumbnailSize": [
-          512,
-          512
-        ]
-      }
+      { "id": "env-boat-cockpit", "name": "Boat Cockpit", "src": "assets/models/environments/boat_cockpit.glb", "thumbnail": "assets/thumbnails/environments/env-sky-cockpit.png", "slot": "environment", "sceneRole": "environment", "status": "runtime-ready", "scale": 1, "rotation": [0, 0, 0], "unlockAtManualPages": 0 },
+      { "id": "env-boat-dashboard", "name": "Boat Dashboard", "src": "assets/models/environments/boat_dashboard.glb", "thumbnail": "", "slot": "environment", "sceneRole": "environment", "status": "runtime-ready", "scale": 1, "rotation": [0, 0, 0], "unlockAtManualPages": 1 },
+      { "id": "env-boat-radio", "name": "Boat Radio", "src": "assets/models/environments/boat_radio.glb", "thumbnail": "", "slot": "environment", "sceneRole": "environment", "status": "runtime-ready", "scale": 1, "rotation": [0, 0, 0], "unlockAtManualPages": 2 },
+      { "id": "env-boat-breakers", "name": "Boat Breakers", "src": "assets/models/environments/boat_breakers.glb", "thumbnail": "", "slot": "environment", "sceneRole": "environment", "status": "runtime-ready", "scale": 1, "rotation": [0, 0, 0], "unlockAtManualPages": 3 },
+      { "id": "env-boat-meters", "name": "Boat Meters", "src": "assets/models/environments/boat_meters.glb", "thumbnail": "", "slot": "environment", "sceneRole": "environment", "status": "runtime-ready", "scale": 1, "rotation": [0, 0, 0], "unlockAtManualPages": 4 },
+      { "id": "env-boat-shifter", "name": "Boat Shifter", "src": "assets/models/environments/boat_shifter.glb", "thumbnail": "", "slot": "environment", "sceneRole": "environment", "status": "runtime-ready", "scale": 1, "rotation": [0, 0, 0], "unlockAtManualPages": 5 },
+      { "id": "env-boat-extinguisher", "name": "Boat Extinguisher", "src": "assets/models/environments/boat_extinguisher.glb", "thumbnail": "", "slot": "environment", "sceneRole": "environment", "status": "runtime-ready", "scale": 1, "rotation": [0, 0, 0], "unlockAtManualPages": 5 },
+      { "id": "env-open-sea", "name": "Open Sea", "src": "assets/models/environments/sea.glb", "thumbnail": "", "slot": "environment", "sceneRole": "environment", "status": "runtime-ready", "scale": 1, "rotation": [0, 0, 0], "unlockAtManualPages": 6 }
     ],
     "steeringWheels": [
-      {
-        "id": "wheel-classic",
-        "name": "Classic Toy Wheel",
-        "src": "assets/models/steering-wheels/wheel-classic.glb",
-        "thumbnail": "",
-        "slot": "cockpit-wheel",
-        "sceneRole": "cockpit-wheel",
-        "unlockAtManualPages": 0,
-        "status": "runtime-ready"
-      },
-      {
-        "id": "wheel-brass",
-        "name": "Royal Brass Wheel",
-        "src": "assets/models/steering-wheels/wheel-brass.glb",
-        "thumbnail": "assets/thumbnails/steering-wheels/wheel-brass.png",
-        "slot": "cockpit-wheel",
-        "sceneRole": "cockpit-wheel",
-        "unlockAtManualPages": 1,
-        "status": "placeholder-ready",
-        "chapterTags": ["harbor-launch"],
-        "thumbnailSize": [
-          512,
-          512
-        ]
-      },
-      {
-        "id": "wheel-pirate",
-        "name": "Pirate Bone Wheel",
-        "src": "assets/models/steering-wheels/wheel-pirate.glb",
-        "thumbnail": "assets/thumbnails/steering-wheels/wheel-pirate.png",
-        "slot": "cockpit-wheel",
-        "sceneRole": "cockpit-wheel",
-        "unlockAtManualPages": 3,
-        "status": "placeholder-ready",
-        "chapterTags": ["pirate-intercept"],
-        "thumbnailSize": [
-          512,
-          512
-        ]
-      }
+      { "id": "wheel-classic", "name": "Classic Toy Wheel", "src": "assets/models/steering-wheels/wheel-classic.glb", "thumbnail": "", "slot": "cockpit-wheel", "sceneRole": "cockpit-wheel", "unlockAtManualPages": 0, "status": "runtime-ready" },
+      { "id": "wheel-brass", "name": "Royal Brass Wheel", "src": "assets/models/steering-wheels/wheel-brass.glb", "thumbnail": "assets/thumbnails/steering-wheels/wheel-brass.png", "slot": "cockpit-wheel", "sceneRole": "cockpit-wheel", "unlockAtManualPages": 1, "status": "runtime-ready" },
+      { "id": "wheel-pirate", "name": "Pirate Bone Wheel", "src": "assets/models/steering-wheels/wheel-pirate.glb", "thumbnail": "assets/thumbnails/steering-wheels/wheel-pirate.png", "slot": "cockpit-wheel", "sceneRole": "cockpit-wheel", "unlockAtManualPages": 3, "status": "runtime-ready" },
+      { "id": "wheel-aqua", "name": "Aqua Wheel", "src": "assets/models/steering-wheels/wheel-aqua.glb", "thumbnail": "", "slot": "cockpit-wheel", "sceneRole": "cockpit-wheel", "unlockAtManualPages": 2, "status": "runtime-ready" },
+      { "id": "wheel-simple", "name": "Simple Wheel", "src": "assets/models/steering-wheels/wheel-simple.glb", "thumbnail": "", "slot": "cockpit-wheel", "sceneRole": "cockpit-wheel", "unlockAtManualPages": 2, "status": "runtime-ready" },
+      { "id": "wheel-traditional", "name": "Traditional Wheel", "src": "assets/models/steering-wheels/wheel-traditional.glb", "thumbnail": "", "slot": "cockpit-wheel", "sceneRole": "cockpit-wheel", "unlockAtManualPages": 4, "status": "runtime-ready" },
+      { "id": "wheel-wooden", "name": "Wooden Wheel", "src": "assets/models/steering-wheels/wheel-wooden.glb", "thumbnail": "", "slot": "cockpit-wheel", "sceneRole": "cockpit-wheel", "unlockAtManualPages": 5, "status": "runtime-ready" }
     ],
     "seats": [
-      {
-        "id": "seat-navy",
-        "name": "Navy Captain Chair",
-        "src": "assets/models/seats/seat-navy.glb",
-        "thumbnail": "",
-        "slot": "player-seat",
-        "sceneRole": "captain-seat",
-        "unlockAtManualPages": 0,
-        "status": "runtime-ready"
-      },
-      {
-        "id": "seat-cream",
-        "name": "Cloud Cream Chair",
-        "src": "assets/models/seats/seat-cream.glb",
-        "thumbnail": "assets/thumbnails/seats/seat-cream.png",
-        "slot": "player-seat",
-        "sceneRole": "engineer-seat",
-        "unlockAtManualPages": 2,
-        "status": "placeholder-ready",
-        "thumbnailSize": [
-          512,
-          512
-        ]
-      },
-      {
-        "id": "seat-pirate",
-        "name": "Pirate Red Chair",
-        "src": "assets/models/seats/seat-pirate.glb",
-        "thumbnail": "assets/thumbnails/seats/seat-pirate.png",
-        "slot": "player-seat",
-        "sceneRole": "engineer-seat",
-        "unlockAtManualPages": 4,
-        "status": "placeholder-ready",
-        "chapterTags": ["pirate-intercept"],
-        "thumbnailSize": [
-          512,
-          512
-        ]
-      }
+      { "id": "seat-navy", "name": "Navy Captain Chair", "src": "assets/models/seats/seat-navy.glb", "thumbnail": "", "slot": "player-seat", "sceneRole": "captain-seat", "unlockAtManualPages": 0, "status": "runtime-ready" },
+      { "id": "seat-cream", "name": "Cloud Cream Chair", "src": "assets/models/seats/seat-cream.glb", "thumbnail": "assets/thumbnails/seats/seat-cream.png", "slot": "player-seat", "sceneRole": "engineer-seat", "unlockAtManualPages": 2, "status": "runtime-ready" },
+      { "id": "seat-pirate", "name": "Pirate Red Chair", "src": "assets/models/seats/seat-pirate.glb", "thumbnail": "assets/thumbnails/seats/seat-pirate.png", "slot": "player-seat", "sceneRole": "engineer-seat", "unlockAtManualPages": 4, "status": "runtime-ready" },
+      { "id": "seat-executive", "name": "Executive Chair", "src": "assets/models/seats/seat-executive.glb", "thumbnail": "", "slot": "player-seat", "sceneRole": "player-seat", "unlockAtManualPages": 1, "status": "runtime-ready" },
+      { "id": "seat-pleather", "name": "Pleather Chair", "src": "assets/models/seats/seat-pleather.glb", "thumbnail": "", "slot": "player-seat", "sceneRole": "player-seat", "unlockAtManualPages": 3, "status": "runtime-ready" },
+      { "id": "seat-professional", "name": "Professional Chair", "src": "assets/models/seats/seat-professional.glb", "thumbnail": "", "slot": "player-seat", "sceneRole": "player-seat", "unlockAtManualPages": 4, "status": "runtime-ready" },
+      { "id": "seat-royal", "name": "Royal Chair", "src": "assets/models/seats/seat-royal.glb", "thumbnail": "", "slot": "player-seat", "sceneRole": "player-seat", "unlockAtManualPages": 5, "status": "runtime-ready" },
+      { "id": "seat-teal", "name": "Teal Chair", "src": "assets/models/seats/seat-teal.glb", "thumbnail": "", "slot": "player-seat", "sceneRole": "player-seat", "unlockAtManualPages": 6, "status": "runtime-ready" }
     ]
   },
   "gui": {
