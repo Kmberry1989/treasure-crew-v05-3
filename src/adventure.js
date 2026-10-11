@@ -74,7 +74,7 @@ function setHud(text) {
 async function buildWorld() {
   // island
   try {
-    const island = await loadGLB("/assets/models/islands/island-castleberry-cove.glb");
+    const island = await loadGLB("./assets/models/islands/island-castleberry-cove.glb");
     island.scene.traverse((o) => {
       if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; game.groundMeshes.push(o); }
     });
@@ -109,7 +109,7 @@ async function buildWorld() {
 
   // treasure chest hotspot
   try {
-    const chest = await loadGLB("/assets/models/items/treasure_chest.glb");
+    const chest = await loadGLB("./assets/models/items/treasure_chest.glb");
     chest.scene.traverse((o) => { if (o.isMesh) o.castShadow = true; });
     const cb = new THREE.Box3().setFromObject(chest.scene);
     const cs = 1.6 / Math.max(cb.getSize(new THREE.Vector3()).x, 0.001);
@@ -122,7 +122,7 @@ async function buildWorld() {
 
   // pirate hotspot (friendly)
   try {
-    const pirate = await loadGLB("/assets/models/pirates/pirate_1.glb");
+    const pirate = await loadGLB("./assets/models/pirates/pirate_1.glb");
     pirate.scene.traverse((o) => { if (o.isMesh) o.castShadow = true; });
     const pb = new THREE.Box3().setFromObject(pirate.scene);
     const ps = 2.2 / (pb.getSize(new THREE.Vector3()).y || 1);
@@ -136,7 +136,7 @@ async function buildWorld() {
 
   // boat hotspot
   try {
-    const boat = await loadGLB("/assets/models/boats/boat_pirate.glb");
+    const boat = await loadGLB("./assets/models/boats/boat_pirate.glb");
     boat.scene.traverse((o) => { if (o.isMesh) o.castShadow = true; });
     const bb = new THREE.Box3().setFromObject(boat.scene);
     const bs = 5 / Math.max(bb.getSize(new THREE.Vector3()).x, 0.001);
@@ -188,8 +188,8 @@ function addSparkle(pos, color) {
 // ---------- player ----------
 async function spawnPlayer(charKey) {
   const path = charKey === "vickie"
-    ? "/assets/models/players/player_vickie.glb"
-    : "/assets/models/players/player_kyle.glb";
+    ? "./assets/models/players/player_vickie.glb"
+    : "./assets/models/players/player_kyle.glb";
   const gltf = await loadGLB(path);
   const root = gltf.scene;
   root.traverse((o) => { if (o.isMesh) o.castShadow = true; });

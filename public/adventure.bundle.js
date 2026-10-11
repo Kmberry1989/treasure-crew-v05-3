@@ -32089,7 +32089,7 @@ function setHud(text) {
 }
 async function buildWorld() {
   try {
-    const island = await loadGLB("/assets/models/islands/island-castleberry-cove.glb");
+    const island = await loadGLB("./assets/models/islands/island-castleberry-cove.glb");
     island.scene.traverse((o) => {
       if (o.isMesh) {
         o.castShadow = true;
@@ -32125,7 +32125,7 @@ async function buildWorld() {
     game.groundMeshes.push(grass);
   }
   try {
-    const chest = await loadGLB("/assets/models/items/treasure_chest.glb");
+    const chest = await loadGLB("./assets/models/items/treasure_chest.glb");
     chest.scene.traverse((o) => {
       if (o.isMesh) o.castShadow = true;
     });
@@ -32140,7 +32140,7 @@ async function buildWorld() {
     console.warn("chest failed", e);
   }
   try {
-    const pirate = await loadGLB("/assets/models/pirates/pirate_1.glb");
+    const pirate = await loadGLB("./assets/models/pirates/pirate_1.glb");
     pirate.scene.traverse((o) => {
       if (o.isMesh) o.castShadow = true;
     });
@@ -32156,7 +32156,7 @@ async function buildWorld() {
     console.warn("pirate failed", e);
   }
   try {
-    const boat = await loadGLB("/assets/models/boats/boat_pirate.glb");
+    const boat = await loadGLB("./assets/models/boats/boat_pirate.glb");
     boat.scene.traverse((o) => {
       if (o.isMesh) o.castShadow = true;
     });
@@ -32205,7 +32205,7 @@ function addSparkle(pos, color) {
   game.sparkles.push(pts);
 }
 async function spawnPlayer(charKey) {
-  const path = charKey === "vickie" ? "/assets/models/players/player_vickie.glb" : "/assets/models/players/player_kyle.glb";
+  const path = charKey === "vickie" ? "./assets/models/players/player_vickie.glb" : "./assets/models/players/player_kyle.glb";
   const gltf = await loadGLB(path);
   const root = gltf.scene;
   root.traverse((o) => {
