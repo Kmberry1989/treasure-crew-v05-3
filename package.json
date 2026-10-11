@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "build:scene": "node scripts/build-animation-catalog.mjs && node scripts/build-scene-runtime.mjs",
-    "predev": "npm run build:scene",
+    "predev": "npm run build:all",
     "dev": "node server.js",
-    "prestart": "npm run build:scene",
+    "prestart": "npm run build:all",
     "start": "node server.js",
     "build:adventure": "node scripts/build-adventure.mjs",
     "build:all": "npm run build:scene && npm run build:adventure"
