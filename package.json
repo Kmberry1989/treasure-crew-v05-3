@@ -8,7 +8,9 @@
     "predev": "npm run build:scene",
     "dev": "node server.js",
     "prestart": "npm run build:scene",
-    "start": "node server.js"
+    "start": "node server.js",
+    "build:adventure": "node scripts/build-adventure.mjs",
+    "build:all": "npm run build:scene && npm run build:adventure"
   },
   "dependencies": {
     "three": "^0.176.0"

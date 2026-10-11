@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+<meta name="theme-color" content="#0b3d5c" />
+<title>Treasure Crew Adventure</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#0b3d5c;
+    font-family:-apple-system, system-ui, sans-serif; user-select:none; -webkit-user-select:none; }
+  #scene { position:fixed; inset:0; }
+  #scene canvas { display:block; }
+
+  .overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(4,20,32,.72); z-index:20; padding:20px; }
+  .overlay.hidden { display:none; }
+  .card { background:#fff8ec; border-radius:20px; padding:28px 24px; max-width:420px; width:100%;
+    text-align:center; box-shadow:0 12px 40px rgba(0,0,0,.4); border:3px solid #c98a2e; }
+  .card h1 { font-size:26px; color:#5a3a12; margin-bottom:8px; }
+  .card p { font-size:15px; color:#7a5c2e; margin-bottom:20px; line-height:1.5; }
+
+  .char-pick { display:flex; gap:16px; justify-content:center; }
+  .char-btn { background:#fff; border:3px solid #d9c08a; border-radius:16px; padding:16px 20px;
+    cursor:pointer; font-size:17px; font-weight:700; color:#5a3a12; min-width:130px; }
+  .char-btn:active { transform:scale(.96); background:#fdf0d5; }
+  .char-btn .emoji { font-size:40px; display:block; margin-bottom:8px; }
+
+  .puzzle-card { max-width:480px; }
+  .puzzle-card h2 { font-size:22px; color:#5a3a12; margin-bottom:6px; }
+  .puzzle-card .sub { font-size:14px; color:#7a5c2e; margin-bottom:18px; }
+  .puzzle-close { margin-top:18px; background:#c98a2e; color:#fff; border:none; border-radius:12px;
+    padding:12px 28px; font-size:16px; font-weight:700; cursor:pointer; }
+  .puzzle-close:active { transform:scale(.96); }
+
+  /* memory match */
+  #matchGrid { display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin:0 auto; max-width:360px; }
+  .match-card { aspect-ratio:1; background:#2a6b8a; border-radius:12px; display:flex;
+    align-items:center; justify-content:center; font-size:32px; cursor:pointer; color:transparent; }
+  .match-card.open, .match-card.done { background:#fff; color:initial; border:2px solid #c98a2e; }
+  .match-card.done { opacity:.55; cursor:default; }
+
+  /* shell game */
+  #shellRow { display:flex; gap:18px; justify-content:center; margin:10px 0 6px; }
+  .shell { font-size:56px; cursor:pointer; transition:transform .25s; }
+  .shell:active { transform:scale(1.15); }
+  #shellMsg { min-height:24px; font-size:15px; color:#7a5c2e; font-weight:600; }
+
+  /* word scramble */
+  #scrambleWord { font-size:34px; letter-spacing:8px; font-weight:800; color:#5a3a12; margin:12px 0; }
+  #scrambleInput { font-size:20px; padding:10px 14px; border-radius:10px; border:2px solid #c98a2e;
+    width:220px; text-align:center; text-transform:uppercase; }
+  #scrambleMsg { min-height:24px; font-size:15px; font-weight:600; margin-top:8px; }
+
+  #hud { position:fixed; top:calc(10px + env(safe-area-inset-top)); left:12px; z-index:10;
+    background:rgba(4,20,32,.6); color:#ffe9b8; border-radius:12px; padding:8px 14px;
+    font-size:14px; font-weight:700; pointer-events:none; }
+  #toast { position:fixed; bottom:calc(24px + env(safe-area-inset-bottom)); left:50%;
+    transform:translateX(-50%); z-index:15; background:rgba(4,20,32,.82); color:#ffe9b8;
+    border-radius:999px; padding:10px 22px; font-size:15px; font-weight:600;
+    opacity:0; transition:opacity .3s; pointer-events:none; white-space:nowrap; }
+  #toast.show { opacity:1; }
+
+  #tapMarker { position:fixed; z-index:5; width:36px; height:36px; margin:-18px 0 0 -18px;
+    border:3px solid #ffd23f; border-radius:50%; pointer-events:none; display:none;
+    animation:ping 0.6s ease-out; }
+  @keyframes ping { 0% { transform:scale(.4); opacity:1; } 100% { transform:scale(1.4); opacity:0; } }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="hud">🏝️ <span id="hudText">Treasure Crew</span></div>
+<div id="toast"></div>
+<div id="tapMarker"></div>
+
+<div id="charSelect" class="overlay">
+  <div class="card">
+    <h1>🏴‍☠️ Treasure Crew</h1>
+    <p>A cozy pirate adventure. Tap anywhere to walk there. Tap shiny things to play.</p>
+    <div class="char-pick">
+      <button class="char-btn" data-char="kyle"><span class="emoji">🧑‍✈️</span>Kyle</button>
+      <button class="char-btn" data-char="vickie"><span class="emoji">👩‍✈️</span>Mom</button>
+    </div>
+  </div>
+</div>
+
+<div id="puzzleOverlay" class="overlay hidden">
+  <div class="card puzzle-card">
+    <h2 id="puzzleTitle"></h2>
+    <div class="sub" id="puzzleSub"></div>
+    <div id="puzzleBody"></div>
+    <button class="puzzle-close" id="puzzleClose">Done</button>
+  </div>
+</div>
+
+<script type="module" src="/adventure.bundle.js"></script>
+</body>
+</html>
